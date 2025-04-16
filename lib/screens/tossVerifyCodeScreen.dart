@@ -5,6 +5,7 @@ import 'package:group_gallery/animations/doridori.dart';
 import 'package:group_gallery/widgets/public/colors.dart';
 import 'package:group_gallery/widgets/public/text.dart';
 import 'package:logger/logger.dart';
+import 'package:shimmer/shimmer.dart';
 
 class TossVerifyCodeScreen extends StatelessWidget {
   const TossVerifyCodeScreen({super.key});
@@ -57,7 +58,6 @@ class _TossVerifyCodeState extends State<TossVerifyCode> with TickerProviderStat
   final FocusNode _focusNode = FocusNode();
   late List<String> numbers;
 
-  late List<AnimationController> _animationRepeatControllers;
   late AnimationController _animationBoxController;
 
   final GlobalKey<DoridoriState> doridoriKey = GlobalKey<DoridoriState>();
@@ -70,34 +70,15 @@ class _TossVerifyCodeState extends State<TossVerifyCode> with TickerProviderStat
   void initState() {
     super.initState();
     numbers = List.filled(widget.numberLength, "");
-    _animationRepeatControllers = List.generate(widget.numberLength, (i) => AnimationController(vsync: this, duration: const Duration(milliseconds: 500)));
     _animationBoxController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
-    triggerStaggeredAnimation();
   }
 
   @override
   void dispose() {
-    for (var controller in _animationRepeatControllers) {
-      controller.dispose();
-    }
     super.dispose();
   }
 
-  void triggerStaggeredAnimation() async {
-    if (mounted) {
-      for (var i = 0; i < widget.numberLength; i++) {
-        _animationRepeatControllers[i].reset();
-        await Future.delayed(Duration(milliseconds: 100));
-        _animationRepeatControllers[i].repeat();
-      }
-      setState(() {});
-    }
-  }
-
   void onTextChanged() async {
-    if (mounted) {
-      triggerStaggeredAnimation();
-    }
     if (_textEditingController.text.length > numbers.length) {
       _textEditingController.text = _textEditingController.text.substring(0, numbers.length);
     }
@@ -183,11 +164,36 @@ class _TossVerifyCodeState extends State<TossVerifyCode> with TickerProviderStat
                               Center(
                                 child: SvgPicture.asset("assets/icon/check.svg", color: Colors.white, width: 40,),
                               ) :
-                              Row(
-                                spacing: 10,
+                              Stack(
                                 children: [
-                                  for (var i = 0; i < widget.numberLength; i++)
-                                    Flexible(child: ColorChangeNumberContainer(index: i, number: numbers[i], numberLength: numbers.length, animationRepeatController: _animationRepeatControllers[i], isCompleted: isCompleted, isWrong: isWrong,))
+                                  Shimmer.fromColors(
+                                    baseColor: CustomColor.greyLightest,
+                                    highlightColor: Colors.white,
+                                    child: Row(
+                                      spacing: 10,
+                                      children: [
+                                        for (var i = 0; i < widget.numberLength; i++)
+                                          Flexible(
+                                            child: ColorFiltered(
+                                              colorFilter: ColorFilter.mode(Colors.transparent, BlendMode.dst),
+                                              child: ColorChangeNumberContainer(shimmer: true, index: i, number: numbers[i], numberLength: numbers.length, isCompleted: isCompleted, isWrong: isWrong,)
+                                            )
+                                          )
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    spacing: 10,
+                                    children: [
+                                      for (var i = 0; i < widget.numberLength; i++)
+                                        Flexible(
+                                            child: ColorFiltered(
+                                                colorFilter: ColorFilter.mode(Colors.transparent, BlendMode.dst),
+                                                child: ColorChangeNumberContainer(shimmer: false, index: i, number: numbers[i], numberLength: numbers.length, isCompleted: isCompleted, isWrong: isWrong,)
+                                            )
+                                        )
+                                    ],
+                                  ),
                                 ],
                               ),
                         ),
@@ -207,20 +213,20 @@ class _TossVerifyCodeState extends State<TossVerifyCode> with TickerProviderStat
 class ColorChangeNumberContainer extends StatefulWidget {
   const ColorChangeNumberContainer({
     super.key,
+    this.shimmer = false,
     this.duration = const Duration(milliseconds: 500),
     required this.index,
     required this.number,
     required this.numberLength,
-    required this.animationRepeatController,
     required this.isCompleted,
     required this.isWrong
   });
 
+  final bool shimmer;
   final Duration duration;
   final int index;
   final String number;
   final int numberLength;
-  final AnimationController animationRepeatController;
   final bool isCompleted;
   final bool isWrong;
 
@@ -229,8 +235,6 @@ class ColorChangeNumberContainer extends StatefulWidget {
 }
 
 class _ColorChangeNumberContainerState extends State<ColorChangeNumberContainer> with TickerProviderStateMixin {
-
-  late Animation<Color?> colorTween;
 
   late AnimationController _animationController;
 
@@ -241,10 +245,6 @@ class _ColorChangeNumberContainerState extends State<ColorChangeNumberContainer>
   void initState() {
     super.initState();
     _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 100));
-    colorTween = ColorTween(begin: startColor, end: endColor).animate(widget.animationRepeatController)..addListener(() {
-      if (!mounted) return;
-      setState(() {});
-    });
   }
 
   @override
@@ -267,20 +267,17 @@ class _ColorChangeNumberContainerState extends State<ColorChangeNumberContainer>
   Widget build(BuildContext context) {
     return ScaleTransition(
           scale: Tween<double>(begin: 1.0, end: 0.9).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutCirc, reverseCurve: Curves.easeInCirc)),
-          child: AnimatedBuilder(
-            animation: widget.animationRepeatController,
-            builder: (context, child) => AnimatedContainer(
-              duration: const Duration(milliseconds: 100),
-              width: double.infinity,
-              height: double.infinity,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: (widget.number == "") ? colorTween.value : (widget.isWrong) ? CustomColor.redLightest : Colors.white,
-                  border: (widget.number == "") ? Border.all(width: 1, color: CustomColor.greyLightest.withOpacity(0)) : Border.all(width: 1, color: (widget.isWrong) ? CustomColor.redLightest : CustomColor.greyLightest.withOpacity(widget.isCompleted ? 0 : 1))
-              ),
-              child: Center(
-                child: Text(widget.number, style: style[TextType.title1]?.merge(TextStyle(color: widget.isWrong ? CustomColor.red : CustomColor.blue, fontWeight: FontWeight.w700))),
-              ),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 100),
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: (widget.number == "") ? (widget.shimmer) ? CustomColor.greyLightest : CustomColor.greyLightest.withOpacity(0) : (widget.isWrong) ? CustomColor.redLightest : Colors.white,
+                border: (widget.number == "") ? Border.all(width: 1, color: CustomColor.greyLightest.withOpacity(0)) : Border.all(width: 1, color: (widget.isWrong) ? CustomColor.redLightest : CustomColor.greyLightest.withOpacity(widget.isCompleted ? 0 : 1))
+            ),
+            child: Center(
+              child: Text(widget.number, style: style[TextType.title1]?.merge(TextStyle(color: widget.isWrong ? CustomColor.red : CustomColor.blue, fontWeight: FontWeight.w700))),
             ),
           ),
         );

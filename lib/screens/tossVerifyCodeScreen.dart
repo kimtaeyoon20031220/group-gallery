@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:group_gallery/animations/doridori.dart';
 import 'package:group_gallery/widgets/public/colors.dart';
 import 'package:group_gallery/widgets/public/text.dart';
 import 'package:logger/logger.dart';
@@ -27,7 +28,10 @@ class TossVerifyCodeScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: TossVerifyCode(numberLength: 6, height: 70,),
+              child: TossVerifyCode(numberLength: 6, height: 70, getVerifyCode: () async {
+                await Future.delayed(const Duration(milliseconds: 300));
+                return "121212";
+              }),
             ),
           ],
         ),
@@ -37,10 +41,11 @@ class TossVerifyCodeScreen extends StatelessWidget {
 }
 
 class TossVerifyCode extends StatefulWidget {
-  const TossVerifyCode({super.key, required this.numberLength, this.height = 70});
+  const TossVerifyCode({super.key, required this.numberLength, this.height = 70, required this.getVerifyCode});
 
   final int numberLength;
   final double height;
+  final Function() getVerifyCode;
 
   @override
   State<TossVerifyCode> createState() => _TossVerifyCodeState();
@@ -55,8 +60,11 @@ class _TossVerifyCodeState extends State<TossVerifyCode> with TickerProviderStat
   late List<AnimationController> _animationRepeatControllers;
   late AnimationController _animationBoxController;
 
+  final GlobalKey<DoridoriState> doridoriKey = GlobalKey<DoridoriState>();
+
   bool isCompleted = false;
   bool isClosed = false;
+  bool isWrong = false;
 
   @override
   void initState() {
@@ -105,13 +113,29 @@ class _TossVerifyCodeState extends State<TossVerifyCode> with TickerProviderStat
       setState(() {
         isCompleted = true;
       });
-      await Future.delayed(const Duration(milliseconds: 500));
-      setState(() {
-        isClosed = true;
-        _animationBoxController.forward().then((_) {
-          _animationBoxController.reverse();
+      final verifyCode = await widget.getVerifyCode();
+      if (verifyCode == _textEditingController.text) {
+        setState(() {
+          isClosed = true;
+          _animationBoxController.forward().then((_) {
+            _animationBoxController.reverse();
+          });
         });
-      });
+      } else {
+        _animationBoxController.reverse();
+        setState(() {
+          isCompleted = false;
+          doridoriKey.currentState?.shake();
+          isWrong = true;
+        });
+        await Future.delayed(const Duration(milliseconds: 500));
+        setState(() {
+          _textEditingController.text = "";
+          numbers = List.filled(widget.numberLength, "");
+          isWrong = false;
+        });
+        _focusNode.requestFocus();
+      }
     }
   }
 
@@ -119,58 +143,61 @@ class _TossVerifyCodeState extends State<TossVerifyCode> with TickerProviderStat
   Widget build(BuildContext context) {
     return Container(
       height: widget.height,
-      child: GestureDetector(
-        onTap: () {
-          _focusNode.requestFocus();
-        },
-        child: Stack(
-          children: [
-            ScaleTransition(
-              scale: Tween(begin: (isClosed) ? 0.9 : 1.0, end: (isClosed) ? 0.4 : 0.9).animate(CurvedAnimation(parent: _animationBoxController, curve: Curves.easeOutCirc, reverseCurve: Curves.easeInCirc)),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: AnimatedContainer(
-                        width: isClosed ? 70 : MediaQuery.of(context).size.width,
-                        height: widget.height,
-                        curve: Curves.easeOutCirc,
-                        duration: Duration(milliseconds: 300),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(isClosed ? widget.height : 20),
-                          color: isClosed ? CustomColor.blue : Colors.white,
-                          border: Border.all(width: 3, color: CustomColor.blue.withOpacity(isCompleted ? 0.3 : 0))
+      child: Doridori(
+        key: doridoriKey,
+        child: GestureDetector(
+          onTap: () {
+            _focusNode.requestFocus();
+          },
+          child: Stack(
+            children: [
+              Opacity(
+                opacity: 0,
+                child: TextField(
+                  focusNode: _focusNode,
+                  controller: _textEditingController,
+                  enabled: !isCompleted,
+                  keyboardType: TextInputType.number,
+                  onChanged: (_) {
+                    onTextChanged();
+                  },
+                ),
+              ),
+              ScaleTransition(
+                scale: Tween(begin: (isClosed) ? 1.0 : 1.0, end: (isClosed) ? 0.8 : 0.8).animate(CurvedAnimation(parent: _animationBoxController, curve: Curves.easeOutCirc, reverseCurve: Curves.easeInCirc)),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: AnimatedContainer(
+                          width: isClosed ? 70 : MediaQuery.of(context).size.width,
+                          height: widget.height,
+                          curve: Curves.easeOutCirc,
+                          duration: Duration(milliseconds: 300),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(isClosed ? widget.height : 20),
+                            color: isClosed ? CustomColor.blue : Colors.white,
+                            border: Border.all(width: 3, color: CustomColor.blue.withOpacity(isCompleted ? 0.3 : 0))
+                          ),
+                          child: isClosed ?
+                              Center(
+                                child: SvgPicture.asset("assets/icon/check.svg", color: Colors.white, width: 40,),
+                              ) :
+                              Row(
+                                spacing: 10,
+                                children: [
+                                  for (var i = 0; i < widget.numberLength; i++)
+                                    Flexible(child: ColorChangeNumberContainer(index: i, number: numbers[i], numberLength: numbers.length, animationRepeatController: _animationRepeatControllers[i], isCompleted: isCompleted, isWrong: isWrong,))
+                                ],
+                              ),
                         ),
-                        child: isClosed ?
-                            Center(
-                              child: SvgPicture.asset("assets/icon/check.svg", color: Colors.white, width: 40,),
-                            ) :
-                            Row(
-                              spacing: 10,
-                              children: [
-                                for (var i = 0; i < widget.numberLength; i++)
-                                  Flexible(child: ColorChangeNumberContainer(index: i, number: numbers[i], numberLength: numbers.length, animationRepeatController: _animationRepeatControllers[i], isCompleted: isCompleted))
-                              ],
-                            ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Opacity(
-              opacity: 0,
-              child: TextField(
-                focusNode: _focusNode,
-                controller: _textEditingController,
-                enabled: !isCompleted,
-                keyboardType: TextInputType.number,
-                onChanged: (_) {
-                  onTextChanged();
-                },
-              ),
-            )
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -186,6 +213,7 @@ class ColorChangeNumberContainer extends StatefulWidget {
     required this.numberLength,
     required this.animationRepeatController,
     required this.isCompleted,
+    required this.isWrong
   });
 
   final Duration duration;
@@ -194,6 +222,7 @@ class ColorChangeNumberContainer extends StatefulWidget {
   final int numberLength;
   final AnimationController animationRepeatController;
   final bool isCompleted;
+  final bool isWrong;
 
   @override
   State<ColorChangeNumberContainer> createState() => _ColorChangeNumberContainerState();
@@ -236,7 +265,6 @@ class _ColorChangeNumberContainerState extends State<ColorChangeNumberContainer>
   
   @override
   Widget build(BuildContext context) {
-
     return ScaleTransition(
           scale: Tween<double>(begin: 1.0, end: 0.9).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutCirc, reverseCurve: Curves.easeInCirc)),
           child: AnimatedBuilder(
@@ -247,11 +275,11 @@ class _ColorChangeNumberContainerState extends State<ColorChangeNumberContainer>
               height: double.infinity,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  color: (widget.number == "") ? colorTween.value : Colors.white,
-                  border: (widget.number == "") ? Border.all(width: 1, color: CustomColor.greyLightest.withOpacity(0)) : Border.all(width: 1, color: CustomColor.greyLightest.withOpacity(widget.isCompleted ? 0 : 1))
+                  color: (widget.number == "") ? colorTween.value : (widget.isWrong) ? CustomColor.redLightest : Colors.white,
+                  border: (widget.number == "") ? Border.all(width: 1, color: CustomColor.greyLightest.withOpacity(0)) : Border.all(width: 1, color: (widget.isWrong) ? CustomColor.redLightest : CustomColor.greyLightest.withOpacity(widget.isCompleted ? 0 : 1))
               ),
               child: Center(
-                child: Text(widget.number, style: style[TextType.title1]?.merge(TextStyle(color: CustomColor.blue, fontWeight: FontWeight.w700))),
+                child: Text(widget.number, style: style[TextType.title1]?.merge(TextStyle(color: widget.isWrong ? CustomColor.red : CustomColor.blue, fontWeight: FontWeight.w700))),
               ),
             ),
           ),

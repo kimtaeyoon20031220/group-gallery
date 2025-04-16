@@ -12,5 +12,6 @@ class CustomColor {
   static const Color blueDark = Color(0xff041042);
   static const Color red = Color(0xffff0d0d);
   static const Color redLight = Color(0xffffcccc);
+  static const Color redLightest = Color(0xfffff0f0);
   static const Color redDark = Color(0xff370404);
 }

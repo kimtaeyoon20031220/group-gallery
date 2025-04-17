@@ -24,6 +24,7 @@ class _MapBallScreenState extends State<MapBallScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: CustomColor.greyLightest,
         title: Text("맵볼", style: style[TextType.footnote]),
       ),
       body: SafeArea(
@@ -31,19 +32,22 @@ class _MapBallScreenState extends State<MapBallScreen> {
           width: double.infinity,
           child: Column(
             children: [
-              MapBall(
-                key: mapBallKey,
-                width: 300,
-                height: 300,
-                initialMapType: MapType.quadrant,
-                lineTitle: MapAlign(left: "Social", right: "Solo", top: "Creative", bottom: "Classic"),
-                loc: (value) {
-                  setState(() {
-                    loc = value;
-                  });
-                },
-                initialLoc: [0.0, 0.0],
-                magnetic: isMagnetic,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: MapBall(
+                  key: mapBallKey,
+                  width: 300,
+                  height: 300,
+                  initialMapType: MapType.quadrant,
+                  lineTitle: MapAlign(left: "Social", right: "Solo", top: "Creative", bottom: "Classic"),
+                  loc: (value) {
+                    setState(() {
+                      loc = value;
+                    });
+                  },
+                  initialLoc: [0.0, 0.0],
+                  magnetic: isMagnetic,
+                ),
               ),
               Row(
                 children: [
@@ -68,9 +72,9 @@ class _MapBallScreenState extends State<MapBallScreen> {
                   ),
                   Expanded(
                     child: WideButton(
-                      text: "Magnetic",
-                      inactiveText: "None",
-                      isActivate: isMagnetic,
+                      text: isMagnetic ? "자석 효과" : "효과 없음",
+                      inactiveText: "설정 불가",
+                      isActivate: mapBallKey.currentState?.mapType == MapType.quadrant ? true : false,
                       onTap: () {
                         setState(() {
                           isMagnetic = !isMagnetic;

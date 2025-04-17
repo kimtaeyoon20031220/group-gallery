@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:group_gallery/animations/doridori.dart';
 import 'package:group_gallery/widgets/public/button_darken.dart';
 import 'package:group_gallery/widgets/public/colors.dart';
 import 'package:group_gallery/widgets/public/scalable_button.dart';
@@ -31,47 +32,55 @@ class WideButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<DoridoriState> doridoriKey = GlobalKey<DoridoriState>();
     return ScalableButton(
       onTap: () {
-        onTap?.call();
+        if (isActivate) {
+          onTap?.call();
+        } else {
+          doridoriKey.currentState?.shake();
+        }
       },
-      button: (tapDown) => Stack(
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(13),
-                color: pointColor.withOpacity(isActivate ? 1 : 0.5)
-            ),
-            width: double.infinity,
-            height: 50,
-            child: Stack(
-              children: [
-                Center(
-                  child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 50),
-                    opacity: isActivate ? 1 : 0,
-                    child: Text(
-                        text,
-                        style: style[TextType.subhead]?.merge(textStyle)
+      button: (tapDown) => Doridori(
+        key: doridoriKey,
+        child: Stack(
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(13),
+                  color: pointColor.withOpacity(isActivate ? 1 : 0.5)
+              ),
+              width: double.infinity,
+              height: 50,
+              child: Stack(
+                children: [
+                  Center(
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 50),
+                      opacity: isActivate ? 1 : 0,
+                      child: Text(
+                          text,
+                          style: style[TextType.subhead]?.merge(textStyle)
+                      ),
                     ),
                   ),
-                ),
-                Center(
-                  child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 50),
-                    opacity: !isActivate ? 1 : 0,
-                    child: Text(
-                        (inactiveText != null) ? inactiveText! : text,
-                        style: style[TextType.subhead]?.merge(textStyle)
+                  Center(
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 50),
+                      opacity: !isActivate ? 1 : 0,
+                      child: Text(
+                          (inactiveText != null) ? inactiveText! : text,
+                          style: style[TextType.subhead]?.merge(textStyle)
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          ButtonDarken(tapDown: tapDown)
-        ],
+            ButtonDarken(tapDown: tapDown)
+          ],
+        ),
       ),
     );
   }

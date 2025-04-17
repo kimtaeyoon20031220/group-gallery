@@ -85,7 +85,7 @@ class GroupScreen extends StatelessWidget {
                   children: [
                     Container(
                         padding: const EdgeInsets.all(5),
-                        child: SvgPicture.asset("assets/icon/arrow-left.svg", height: 30, color: Color(0xff4A4B4F),)
+                        child: SvgPicture.asset("assets/icons/arrow-left.svg", height: 30, color: Color(0xff4A4B4F),)
                     ),
                     ButtonDarken(tapDown: tapDown)
                   ]
@@ -106,14 +106,14 @@ class GroupScreen extends StatelessWidget {
                 children: [
                   (args.isLocked) ? Container(
                       margin: const EdgeInsets.fromLTRB(0, 0, 15, 0),
-                      child: SvgPicture.asset("assets/icon/lock-closed.svg")
+                      child: SvgPicture.asset("assets/icons/lock-closed.svg")
                   ) : SizedBox(),
                   Expanded(child: Text(args.title, style: style[TextType.title1Bold], overflow: TextOverflow.fade, softWrap: false)),
                 ]
               ),
               buttons: [
-                SvgPicture.asset("assets/icon/squares-plus.svg"),
-                SvgPicture.asset("assets/icon/cog-8-tooth.svg")
+                SvgPicture.asset("assets/icons/squares-plus.svg"),
+                SvgPicture.asset("assets/icons/cog-8-tooth.svg")
               ],
               buttonsOnPress: [
                 () {},

@@ -55,7 +55,7 @@ class _LockScreenState extends State<LockScreen> {
                 children: [
                   Container(
                       padding: const EdgeInsets.all(5),
-                      child: SvgPicture.asset("assets/icon/arrow-left.svg", height: 30, color: CustomColor.greyLight)
+                      child: SvgPicture.asset("assets/icons/arrow-left.svg", height: 30, color: CustomColor.greyLight)
                   ),
                   ButtonDarken(tapDown: tapDown, color: CustomColor.greyLightest)
                 ]
@@ -104,7 +104,7 @@ class _LockScreenState extends State<LockScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       spacing: 10,
                       children: [
-                        SvgPicture.asset("assets/icon/lock-closed.svg", color: Colors.white),
+                        SvgPicture.asset("assets/icons/lock-closed.svg", color: Colors.white),
                         Flexible(child: Text(widget.args.title, style: style[TextType.title1Bold]?.merge(TextStyle(color: Colors.white)), softWrap: true))
                       ],
                     ),

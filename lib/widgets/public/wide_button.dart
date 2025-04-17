@@ -15,7 +15,8 @@ class WideButton extends StatelessWidget {
     this.reverseDuration = const Duration(milliseconds: 200),
     this.scale = 0.93,
     this.pointColor = CustomColor.blue,
-    this.textStyle = const TextStyle(color: Colors.white)
+    this.textStyle = const TextStyle(color: Colors.white),
+    this.inactiveText
   });
   final bool isActivate;
   final String text;
@@ -26,6 +27,7 @@ class WideButton extends StatelessWidget {
   final double scale;
   final Color pointColor;
   final TextStyle textStyle;
+  final String? inactiveText;
 
   @override
   Widget build(BuildContext context) {
@@ -35,21 +37,39 @@ class WideButton extends StatelessWidget {
       },
       button: (tapDown) => Stack(
         children: [
-          Container(
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(13),
-              color: pointColor
+                borderRadius: BorderRadius.circular(13),
+                color: pointColor.withOpacity(isActivate ? 1 : 0.5)
             ),
             width: double.infinity,
             height: 50,
-            child: Center(
-              child: Text(
-                text,
-                style: style[TextType.subhead]?.merge(textStyle)
-              ),
+            child: Stack(
+              children: [
+                Center(
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 50),
+                    opacity: isActivate ? 1 : 0,
+                    child: Text(
+                        text,
+                        style: style[TextType.subhead]?.merge(textStyle)
+                    ),
+                  ),
+                ),
+                Center(
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 50),
+                    opacity: !isActivate ? 1 : 0,
+                    child: Text(
+                        (inactiveText != null) ? inactiveText! : text,
+                        style: style[TextType.subhead]?.merge(textStyle)
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-
           ButtonDarken(tapDown: tapDown)
         ],
       ),

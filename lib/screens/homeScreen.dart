@@ -22,9 +22,9 @@ class HomeScreen extends StatelessWidget {
     setUiOverlayStyleIOS(ThemeType.dark);
 
     final items = [
-      { "id": "", "title": "개인정보 ㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㅇㄹㄴㅁㅇㄹasdfasdfasdfasdf", "image_count": 7, "icon": "🔐", "is_locked": true },
-      { "id": "", "title": "asdfasdfasdf", "image_count": 10, "icon": "🎶", "is_locked": false },
-      { "id": "", "title": "개인정보", "image_count": 12, "icon": "🧾", "is_locked": true }
+      { "id": "", "title": "개인정보 ㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㅇㄹㄴㅁㅇㄹasdfasdfasdfasdf", "image_count": 7, "icons": "🔐", "is_locked": true },
+      { "id": "", "title": "asdfasdfasdf", "image_count": 10, "icons": "🎶", "is_locked": false },
+      { "id": "", "title": "개인정보", "image_count": 12, "icons": "🧾", "is_locked": true }
     ];
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -43,7 +43,7 @@ class HomeScreen extends StatelessWidget {
                   itemCount: items.length,
                   itemBuilder: (BuildContext context, int index) {
                     Map<String, dynamic> item = items[index];
-                    return ListItem(id: item["id"], title: item["title"], imageCount: item["image_count"], icon: item["icon"], isLocked: item["is_locked"]);
+                    return ListItem(id: item["id"], title: item["title"], imageCount: item["image_count"], icon: item["icons"], isLocked: item["is_locked"]);
                   },
                 )
               )

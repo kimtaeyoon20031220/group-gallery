@@ -23,7 +23,8 @@ class WorkScreen extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final List<Work> works = [
-      Work(title: "토스 문자 인증", icon: "🚨", address: "/toss_verify_code", date: "2025.04.16")
+      Work(title: "토스 문자 인증", icon: "assets/images/toss_logo.png", address: "/toss_verify_code", date: "2025.04.16"),
+      Work(title: "맵볼", icon: "assets/images/toss_logo.png", address: "/map_ball", date: "2025.04.17")
     ];
 
     return Scaffold(
@@ -76,7 +77,7 @@ class WorkListItem extends StatelessWidget {
                             width: 35,
                             height: 35,
                             child: Center(
-                                child: Text(work.icon, style: style[TextType.headline])
+                                child: Image.asset(work.icon, width: 25),
                             )
                         ),
                         Expanded(
@@ -87,7 +88,7 @@ class WorkListItem extends StatelessWidget {
                           flex: 1,
                           child: Text(work.date, style: style[TextType.footnote]?.merge(TextStyle(color: CustomColor.grey)), softWrap: false, overflow: TextOverflow.fade, maxLines: 1, textAlign: TextAlign.end,),
                         ),
-                        SvgPicture.asset("assets/icon/chevron-right.svg")
+                        SvgPicture.asset("assets/icons/chevron-right.svg")
                       ]
                   )
               ),

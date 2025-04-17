@@ -162,7 +162,7 @@ class _TossVerifyCodeState extends State<TossVerifyCode> with TickerProviderStat
                           ),
                           child: isClosed ?
                               Center(
-                                child: SvgPicture.asset("assets/icon/check.svg", color: Colors.white, width: 40,),
+                                child: SvgPicture.asset("assets/icons/check.svg", color: Colors.white, width: 40,),
                               ) :
                               Stack(
                                 children: [

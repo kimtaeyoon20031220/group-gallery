@@ -56,7 +56,7 @@ class EditText extends StatelessWidget {
           (onComplete != null) ? ImageButton(
             padding: const EdgeInsets.all(7),
             onTap: onComplete!,
-            icon: SvgPicture.asset("assets/icon/arrow-right-circle.svg", width: 25)
+            icon: SvgPicture.asset("assets/icons/arrow-right-circle.svg", width: 25)
           )
            : SizedBox()
         ],

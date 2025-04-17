@@ -57,9 +57,9 @@ class ListItem extends StatelessWidget {
                   flex: 1,
                   child: Text(title, style: style[TextType.body], softWrap: false, overflow: TextOverflow.fade, maxLines: 1),
                 ),
-                (isLocked) ? SvgPicture.asset("assets/icon/lock-closed.svg", width: 13, height: 13, color: Color(0xff4A4B4F),) : SizedBox(),
+                (isLocked) ? SvgPicture.asset("assets/icons/lock-closed.svg", width: 13, height: 13, color: Color(0xff4A4B4F),) : SizedBox(),
                 Text("$imageCount", style: style[TextType.body]?.merge(TextStyle(color: CustomColor.grey))),
-                SvgPicture.asset("assets/icon/chevron-right.svg")
+                SvgPicture.asset("assets/icons/chevron-right.svg")
               ]
             )
           ),

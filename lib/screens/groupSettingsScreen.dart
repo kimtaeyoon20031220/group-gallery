@@ -29,10 +29,10 @@ class GroupSettingsScreen extends StatelessWidget {
     final TextEditingController textEditingController = TextEditingController();
 
     final settings = [
-      { "title": "대출 받기", "description": "신용 · 주택 · 대환 · 내 대출", "icon": "🙈", "id": "" },
-      { "title": "계좌 개설", "description": "토스뱅크 · 타 은행/증권", "icon": "😎", "id": "" },
-      { "title": "카드 발급", "description": "혜택 추천 · 타 은행/증권", "icon": "👀", "id": "" },
-      { "title": "휴대폰 · 인터넷", "description": "통신요금 · 기기구매", "icon": "📱", "id": "" }
+      { "title": "대출 받기", "description": "신용 · 주택 · 대환 · 내 대출", "icons": "🙈", "id": "" },
+      { "title": "계좌 개설", "description": "토스뱅크 · 타 은행/증권", "icons": "😎", "id": "" },
+      { "title": "카드 발급", "description": "혜택 추천 · 타 은행/증권", "icons": "👀", "id": "" },
+      { "title": "휴대폰 · 인터넷", "description": "통신요금 · 기기구매", "icons": "📱", "id": "" }
     ];
 
     return Scaffold(
@@ -47,7 +47,7 @@ class GroupSettingsScreen extends StatelessWidget {
                 children: [
                   Container(
                       padding: const EdgeInsets.all(5),
-                      child: SvgPicture.asset("assets/icon/arrow-left.svg", height: 30, color: Color(0xff4A4B4F),)
+                      child: SvgPicture.asset("assets/icons/arrow-left.svg", height: 30, color: Color(0xff4A4B4F),)
                   ),
                   ButtonDarken(tapDown: tapDown)
                 ]
@@ -75,7 +75,7 @@ class GroupSettingsScreen extends StatelessWidget {
               })
             ]),
             SettingsBox(title: "모든 서비스", settings: [
-              for (var i = 0; i < settings.length; i++) SettingItem(title: settings[i]["title"]!, description: settings[i]["description"]!, icon: settings[i]["icon"]!, id: settings[i]["id"]!, onTap: () {})
+              for (var i = 0; i < settings.length; i++) SettingItem(title: settings[i]["title"]!, description: settings[i]["description"]!, icon: settings[i]["icons"]!, id: settings[i]["id"]!, onTap: () {})
             ])
           ]
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:group_gallery/screens/mapBallScreen.dart';
 import 'package:group_gallery/screens/tossVerifyCodeScreen.dart';
 import 'package:group_gallery/screens/workScreen.dart';
 
@@ -34,6 +35,9 @@ Route pageRoute(settings) {
     }
     case '/work': {
       return pageRouteBuilder(WorkScreen(), TransitionType.fromRight, settings);
+    }
+    case '/map_ball': {
+      return pageRouteBuilder(MapBallScreen(), TransitionType.fromRight, settings);
     }
     default: return pageRouteBuilder(ErrorScreen(), TransitionType.fromBottom, settings);
   }

@@ -72,7 +72,7 @@ class _PhotoScreenState extends State<PhotoScreen> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child: SvgPicture.asset("assets/icon/x-mark.svg"),
+                            child: SvgPicture.asset("assets/icons/x-mark.svg"),
                           ),
                           ButtonDarken(tapDown: tapDown, color: CustomColor.greyLightest)
                         ],
@@ -127,7 +127,7 @@ class _PhotoScreenState extends State<PhotoScreen> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            IconTextButton(icon: SvgPicture.asset("assets/icon/trash-bin.svg", width: 20,), text: "삭제", shadowColor: CustomColor.greyLightest, opacity: 0.1, borderRadius: 15, onTap: () {
+                            IconTextButton(icon: SvgPicture.asset("assets/icons/trash-bin.svg", width: 20,), text: "삭제", shadowColor: CustomColor.greyLightest, opacity: 0.1, borderRadius: 15, onTap: () {
                               showSlideDialog(
                                 context,
                                 RoundDialog(
@@ -143,7 +143,7 @@ class _PhotoScreenState extends State<PhotoScreen> {
                                 )
                               );
                             }),
-                            IconTextButton(icon: SvgPicture.asset("assets/icon/pencil.svg", width: 20,), text: "수정", shadowColor: CustomColor.greyLightest, opacity: 0.1, borderRadius: 15, onTap: () {})
+                            IconTextButton(icon: SvgPicture.asset("assets/icons/pencil.svg", width: 20,), text: "수정", shadowColor: CustomColor.greyLightest, opacity: 0.1, borderRadius: 15, onTap: () {})
                           ]
                         ),
                       ),

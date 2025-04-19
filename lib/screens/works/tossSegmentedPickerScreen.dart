@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:group_gallery/widgets/public/colors.dart';
 import 'package:group_gallery/widgets/public/text.dart';
+import 'package:group_gallery/widgets/public/wide_button.dart';
 
-import '../widgets/public/scalable_button.dart';
+import '../../widgets/public/scalable_button.dart';
 
 class TossSegmentedPickerScreen extends StatelessWidget {
   const TossSegmentedPickerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    final values = ["내 보험", "보험 찾기", "보험사"];
+    final pageController = PageController();
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -22,14 +27,72 @@ class TossSegmentedPickerScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: SegmentedPicker(
-                  values: ["내 보험", "보험 찾기", "보험사"],
+                  initialIndex: 0,
+                  values: values,
                   onTaps: [() {
                     print(0);
+                    pageController.animateToPage(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOutCirc);
                   }, () {
                     print(1);
+                    pageController.animateToPage(1, duration: const Duration(milliseconds: 300), curve: Curves.easeOutCirc);
                   }, () {
                     print(2);
+                    pageController.animateToPage(2, duration: const Duration(milliseconds: 300), curve: Curves.easeOutCirc);
                   }],
+                ),
+              ),
+              Expanded(
+                child: PageView.builder(
+                  pageSnapping: true,
+                  controller: pageController,
+                  itemCount: values.length,
+                  itemBuilder: (context, index) =>
+                    ListView(
+                      children: [
+                        Padding(padding: const EdgeInsets.all(10),
+                          child: Column(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(13),
+                                  color: CustomColor.greyLightest,
+                                ),
+                                child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(20.0),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text("내 보험", style: style[TextType.footnote]?.merge(TextStyle(color: CustomColor.greyLight))),
+                                                  Text("3,577원", style: style[TextType.title3]?.merge(TextStyle(fontWeight: FontWeight.w600)))
+                                                ]
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 100,
+                                              child: WideButton(
+                                                text: "병원비 청구",
+                                                borderRadius: 10,
+                                                height: 40,
+                                                pointColor: Color(0xffdee1f1),
+                                                textStyle: TextStyle(color: CustomColor.grey, fontWeight: FontWeight.w600),
+                                              ),
+                                            )
+                                          ]
+                                        ),
+                                      )
+                                    ]
+                                )
+                              )
+                            ]
+                          ),
+                        )
+                      ],
+                    )
                 ),
               )
             ]
@@ -44,11 +107,13 @@ class SegmentedPicker extends StatefulWidget {
   const SegmentedPicker({
     super.key,
     required this.values,
-    required this.onTaps
+    required this.onTaps,
+    this.initialIndex = 0,
   });
 
   final List<String> values;
   final List<Function()> onTaps;
+  final int initialIndex;
 
   @override
   State<SegmentedPicker> createState() => _SegmentedPickerState();
@@ -56,7 +121,13 @@ class SegmentedPicker extends StatefulWidget {
 
 class _SegmentedPickerState extends State<SegmentedPicker> {
 
-  int _selectedIdx = 0;
+  late int _selectedIdx;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIdx = widget.initialIndex;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,10 +168,8 @@ class _SegmentedPickerState extends State<SegmentedPicker> {
                   Expanded(child: button(i, widget.values[i], widget.onTaps[i]))
               ]
             ),
-            AnimatedPositioned(
+            Positioned(
               left: (constraints.maxWidth / 3) * _selectedIdx,
-              curve: Curves.easeOutCirc,
-              duration: const Duration(milliseconds: 300),
               child: Container(
                 width: constraints.maxWidth / 3,
                 height: constraints.maxHeight,

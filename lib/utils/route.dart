@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:group_gallery/screens/mapBallScreen.dart';
-import 'package:group_gallery/screens/tossSegmentedPickerScreen.dart';
-import 'package:group_gallery/screens/tossVerifyCodeScreen.dart';
+import 'package:group_gallery/screens/works/mapBallScreen.dart';
+import 'package:group_gallery/screens/works/tossSegmentedPickerScreen.dart';
+import 'package:group_gallery/screens/works/tossVerifyCodeScreen.dart';
 import 'package:group_gallery/screens/workScreen.dart';
+import 'package:group_gallery/screens/works/tossWireScreen.dart';
 
 import '../screens/errorScreen.dart';
 import '../screens/groupScreen.dart';
@@ -43,6 +44,9 @@ Route pageRoute(settings) {
     case '/toss_segmented_picker': {
       return pageRouteBuilder(TossSegmentedPickerScreen(), TransitionType.fromRight, settings);
     }
+    case '/toss_wire': {
+      return pageRouteBuilder(TossWireScreen(), TransitionType.fromRight, settings);
+    }
     default: return pageRouteBuilder(ErrorScreen(), TransitionType.fromBottom, settings);
   }
 }
@@ -55,7 +59,7 @@ PageRouteBuilder pageRouteBuilder(Widget nextScreen, TransitionType transitionTy
   );
 }
 
-enum TransitionType { fromBottom, fromTop, fromLeft, fromRight, fadeInScaleUp }
+enum TransitionType { fromBottom, fromTop, fromLeft, fromRight, fadeInScaleUp, fadeIn }
 
 class SlideCurvedTransition extends StatelessWidget {
   const SlideCurvedTransition({
@@ -151,6 +155,13 @@ Widget transition(BuildContext context, Animation<double> animation, Animation<d
           scale: Tween<double>(begin: 0.0, end: 1.0).animate(curvedAnimation),
           child: child
         ),
+      );
+    }
+    case TransitionType.fadeIn: {
+      final curvedAnimation = CurvedAnimation(parent: animation, curve: Curves.easeOutCirc, reverseCurve: Curves.easeInCirc);
+      return FadeTransition(
+        opacity: Tween<double>(begin: 0.0, end: 1.0).animate(curvedAnimation),
+        child: child,
       );
     }
   }

@@ -144,7 +144,7 @@ class MapBall extends StatefulWidget {
   State<MapBall> createState() => _MapBallState();
 }
 
-class _MapBallState extends State<MapBall> with TickerProviderStateMixin {
+class _MapBallState extends State<MapBall> with SingleTickerProviderStateMixin {
 
   Offset _position = const Offset(0.0, 0.0);
   MapType mapType = MapType.none;

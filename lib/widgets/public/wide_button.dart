@@ -17,7 +17,11 @@ class WideButton extends StatelessWidget {
     this.scale = 0.93,
     this.pointColor = CustomColor.blue,
     this.textStyle = const TextStyle(color: Colors.white),
-    this.inactiveText
+    this.inactiveText,
+    this.height = 50,
+    this.borderRadius = 13,
+    this.pressedColor = CustomColor.blackLightest,
+    this.pressedColorOpacity = 0.1
   });
   final bool isActivate;
   final String text;
@@ -29,6 +33,10 @@ class WideButton extends StatelessWidget {
   final Color pointColor;
   final TextStyle textStyle;
   final String? inactiveText;
+  final double height;
+  final double borderRadius;
+  final Color pressedColor;
+  final double pressedColorOpacity;
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +56,11 @@ class WideButton extends StatelessWidget {
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(13),
+                  borderRadius: BorderRadius.circular(borderRadius),
                   color: pointColor.withOpacity(isActivate ? 1 : 0.5)
               ),
               width: double.infinity,
-              height: 50,
+              height: height,
               child: Stack(
                 children: [
                   Center(
@@ -78,7 +86,7 @@ class WideButton extends StatelessWidget {
                 ],
               ),
             ),
-            ButtonDarken(tapDown: tapDown)
+            ButtonDarken(tapDown: tapDown, color: pressedColor, opacity: pressedColorOpacity)
           ],
         ),
       ),

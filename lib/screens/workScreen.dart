@@ -25,7 +25,8 @@ class WorkScreen extends StatelessWidget {
     final List<Work> works = [
       Work(title: "토스 문자 인증", icon: "assets/images/toss_logo.png", address: "/toss_verify_code", date: "2025.04.16"),
       Work(title: "맵볼", icon: "assets/images/toss_logo.png", address: "/map_ball", date: "2025.04.17"),
-      Work(title: "토스 Segmented Picker", icon: "assets/images/toss_logo.png", address: "/toss_segmented_picker", date: "2025.04.17")
+      Work(title: "토스 Segmented Picker", icon: "assets/images/toss_logo.png", address: "/toss_segmented_picker", date: "2025.04.17"),
+      Work(title: "토스 송금", icon: "assets/images/toss_logo.png", address: "/toss_wire", date: "2025.04.19")
     ];
 
     return Scaffold(

@@ -75,14 +75,26 @@ class _TossVerifyCodeState extends State<TossVerifyCode> with TickerProviderStat
 
   @override
   void dispose() {
+    _textEditingController.dispose();
+    _animationBoxController.dispose();
     super.dispose();
   }
 
-  void onTextChanged() async {
+  void onTextChanged(value) async {
     if (_textEditingController.text.length > numbers.length) {
       _textEditingController.text = _textEditingController.text.substring(0, numbers.length);
+      _textEditingController.selection = TextSelection.fromPosition(
+        TextPosition(offset: _textEditingController.text.length)
+      );
     }
     _textEditingController.text = _textEditingController.text.trim();
+
+    // macOS에서 controller.text에 값을 직접 할당한 이후 커서가 모든 값을 잡아서 입력 때마다 값이 초기화되어
+    // TextSelection.position을 text의 맨 뒤로 넘기는 코드.
+    _textEditingController.selection = TextSelection.fromPosition(
+        TextPosition(offset: _textEditingController.text.length)
+    );
+
     final text = _textEditingController.text;
     setState(() {
       for (var i = 0; i < numbers.length; i++) {
@@ -110,8 +122,8 @@ class _TossVerifyCodeState extends State<TossVerifyCode> with TickerProviderStat
           isWrong = true;
         });
         await Future.delayed(const Duration(milliseconds: 500));
+        _textEditingController.clear();
         setState(() {
-          _textEditingController.text = "";
           numbers = List.filled(widget.numberLength, "");
           isWrong = false;
         });
@@ -122,7 +134,7 @@ class _TossVerifyCodeState extends State<TossVerifyCode> with TickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: widget.height,
       child: Doridori(
         key: doridoriKey,
@@ -139,9 +151,7 @@ class _TossVerifyCodeState extends State<TossVerifyCode> with TickerProviderStat
                   controller: _textEditingController,
                   enabled: !isCompleted,
                   keyboardType: TextInputType.number,
-                  onChanged: (_) {
-                    onTextChanged();
-                  },
+                  onChanged: onTextChanged,
                 ),
               ),
               ScaleTransition(

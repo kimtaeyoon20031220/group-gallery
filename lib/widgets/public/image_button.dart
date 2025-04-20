@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:group_gallery/widgets/public/button_darken.dart';
 import 'package:group_gallery/widgets/public/colors.dart';
 import 'package:group_gallery/widgets/public/scalable_button.dart';
 
@@ -24,13 +23,13 @@ class ImageButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScalableButton(
+      buttonColor: Colors.transparent,
       button: (tapDown) => Stack(
         children: [
           Padding(
             padding: padding,
-            child: icon
+            child: Center(child: icon)
           ),
-          ButtonDarken(tapDown: tapDown, color: shadowColor, borderRadius: borderRadius, opacity: opacity)
         ],
       ),
       onTap: onTap,

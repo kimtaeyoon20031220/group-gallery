@@ -3,7 +3,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:group_gallery/widgets/public/button_darken.dart';
 import 'package:group_gallery/widgets/public/colors.dart';
 import 'package:group_gallery/widgets/public/icon_text_button.dart';
 import 'package:group_gallery/widgets/public/image_button.dart';
@@ -68,14 +67,9 @@ class _PhotoScreenState extends State<PhotoScreen> {
                   children: [
                     Expanded(child: PhotosList(pIds: widget.args.pIds, index: pointIndex, setIndex: setIndex, controller: photosListCarouselSliderController)),
                     ScalableButton(
-                      button: (tapDown) => Stack(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: SvgPicture.asset("assets/icons/x-mark.svg"),
-                          ),
-                          ButtonDarken(tapDown: tapDown, color: CustomColor.greyLightest)
-                        ],
+                      button: (tapDown) => Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: SvgPicture.asset("assets/icons/x-mark.svg"),
                       ),
                       onTap: () {
                         Navigator.pop(context);
@@ -181,19 +175,14 @@ class PhotosList extends StatelessWidget {
         onTap: () {
           setIndex(idx);
         },
-        button: (tapDown) => Stack(
-          children: [
-            AnimatedContainer(
-              duration: Duration(milliseconds: 300),
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                border: Border.all(style: (idx == index) ? BorderStyle.solid : BorderStyle.solid, width: (index == idx) ? 4 : 1, color: Colors.white.withOpacity(index == idx ? 1 : 0.2), strokeAlign: BorderSide.strokeAlignInside)
-              ),
-              child: Image.network(pIds[idx]["link"])
-            ),
-            ButtonDarken(tapDown: tapDown, color: CustomColor.greyLightest, borderRadius: 0)
-          ],
+        button: (tapDown) => AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            border: Border.all(style: (idx == index) ? BorderStyle.solid : BorderStyle.solid, width: (index == idx) ? 4 : 1, color: Colors.white.withOpacity(index == idx ? 1 : 0.2), strokeAlign: BorderSide.strokeAlignInside)
+          ),
+          child: Image.network(pIds[idx]["link"])
         ),
       ),
     );

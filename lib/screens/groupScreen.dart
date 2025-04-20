@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:group_gallery/screens/groupSettingsScreen.dart';
 import 'package:group_gallery/screens/photoScreen.dart';
 import 'package:group_gallery/utils/set_ui_overlay_style.dart';
-import 'package:group_gallery/widgets/public/button_darken.dart';
 import 'package:group_gallery/widgets/public/colors.dart';
 import 'package:group_gallery/widgets/public/scalable_button.dart';
 import 'package:group_gallery/widgets/public/text.dart';
@@ -81,14 +80,9 @@ class GroupScreen extends StatelessWidget {
           leading: Container(
             margin: const EdgeInsets.fromLTRB(20, 0, 0, 0),
             child: ScalableButton(
-              button: (tapDown) => Stack(
-                  children: [
-                    Container(
-                        padding: const EdgeInsets.all(5),
-                        child: SvgPicture.asset("assets/icons/arrow-left.svg", height: 30, color: Color(0xff4A4B4F),)
-                    ),
-                    ButtonDarken(tapDown: tapDown)
-                  ]
+              button: (tapDown) => Container(
+                  padding: const EdgeInsets.all(5),
+                  child: SvgPicture.asset("assets/icons/arrow-left.svg", height: 30, color: Color(0xff4A4B4F),)
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -140,22 +134,17 @@ class GroupScreen extends StatelessWidget {
                         onTap: () {
                           Navigator.pushNamed(context, '/group/photo', arguments: PhotoScreenArgs(pIds: photoIds, index: index));
                         },
-                        button: (tapDown) => Stack(
-                          children: [
-                            Positioned.fill(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(13),
-                                  color: CustomColor.greyLightest
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(13),
-                                  child: Image.network(photoIds[index]["link"], fit: BoxFit.cover)
-                                )
-                              ),
+                        button: (tapDown) => Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(13),
+                              color: CustomColor.greyLightest
                             ),
-                            ButtonDarken(tapDown: tapDown, opacity: 0.2)
-                          ],
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(13),
+                              child: Image.network(photoIds[index]["link"], fit: BoxFit.cover)
+                            )
+                          ),
                         ),
                       );
                     }

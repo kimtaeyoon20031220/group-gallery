@@ -1,22 +1,40 @@
 import 'package:flutter/material.dart';
 
+import '../../curves/curved_animation.dart';
 import '../../curves/ease_in_circ.dart';
 import '../../curves/ease_out_circ.dart';
+import 'colors.dart';
 
 class ScalableButton extends StatefulWidget {
   const ScalableButton({
     super.key,
     this.duration = const Duration(milliseconds: 100),
     this.reverseDuration = const Duration(milliseconds: 200),
-    this.scale = 0.93,
+    this.scale = 0.9,
     required this.button,
-    required this.onTap
+    required this.onTap,
+    this.buttonColor = Colors.transparent,
+    this.borderRadius = 13,
+    this.highlightColor,
+    this.splashColor,
+    this.hoverColor,
+    this.focusColor,
+    this.curve = CustomCurves.bounceOut,
+    this.reverseCurve = CustomCurves.bounceIn
   });
   final Duration duration;
   final Duration reverseDuration;
   final Widget Function(bool tapDown)? button;
   final double scale;
   final Function() onTap;
+  final Color buttonColor;
+  final double borderRadius;
+  final Color? highlightColor;
+  final Color? splashColor;
+  final Color? hoverColor;
+  final Color? focusColor;
+  final Curve curve;
+  final Curve reverseCurve;
 
   @override
   State<ScalableButton> createState() => _ScalableButtonState();
@@ -44,8 +62,8 @@ class _ScalableButtonState extends State<ScalableButton> with SingleTickerProvid
     ).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: Curves.easeOutCirc,
-        reverseCurve: Curves.easeInCirc
+        curve: widget.curve,
+        reverseCurve: widget.reverseCurve
       )
     );
   }
@@ -89,20 +107,23 @@ class _ScalableButtonState extends State<ScalableButton> with SingleTickerProvid
     return ScaleTransition(
       scale: _animation,
       child: Material(
+        clipBehavior: Clip.hardEdge,
+        borderRadius: BorderRadius.circular(widget.borderRadius),
         color: Colors.transparent,
-        child: Stack(
-          children: [
-            widget.button!(tapDown),
-            Positioned.fill(
-              child: GestureDetector(
-                onTapDown: _onTapDown,
-                onTapUp: _onTapUp,
-                onTapCancel: _onTapCancel,
-                behavior: HitTestBehavior.translucent,
-                child: const SizedBox.expand(), // 전면 터치 처리
-              ),
+        child: InkWell(
+          highlightColor: widget.highlightColor,
+          splashColor: widget.splashColor,
+          hoverColor: widget.hoverColor,
+          focusColor: widget.focusColor,
+          onTapDown: _onTapDown,
+          onTapUp: _onTapUp,
+          onTapCancel: _onTapCancel,
+          child: Ink(
+            decoration: BoxDecoration(
+              color: widget.buttonColor,
+              borderRadius: BorderRadius.circular(widget.borderRadius)
             ),
-          ],
+            child: widget.button!(tapDown))
         ),
       ),
     );

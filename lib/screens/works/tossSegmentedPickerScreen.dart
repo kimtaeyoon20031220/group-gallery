@@ -186,6 +186,9 @@ class _SegmentedPickerState extends State<SegmentedPicker> {
 
   Widget button(int index, String value, Function() onTap) {
     return ScalableButton(
+      highlightColor: Colors.white.withOpacity(0),
+      splashColor: Colors.white.withOpacity(0),
+      hoverColor: Colors.transparent,
       scale: 1.0,
       button: (tapDown) => Stack(
         children: [

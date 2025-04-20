@@ -6,7 +6,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:group_gallery/screens/groupScreen.dart';
 import 'package:group_gallery/utils/set_ui_overlay_style.dart';
 import 'package:group_gallery/widgets/home/list_item.dart';
-import 'package:group_gallery/widgets/public/button_darken.dart';
 import 'package:group_gallery/widgets/public/colors.dart';
 import 'package:group_gallery/widgets/public/text.dart';
 import 'package:group_gallery/widgets/public/title.dart';
@@ -56,20 +55,15 @@ class HomeScreen extends StatelessWidget {
 
   Widget containerButton(BuildContext context, String title) {
     return ScalableButton(
-      button: (tapDown) => Stack(
-        children: [
-          Container(
-            width: 120,
-            height: 100,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(13),
-              color: CustomColor.greyLightest
-            ),
-            child: Text(title, style: style[TextType.headline]),
-          ),
-          ButtonDarken(tapDown: tapDown)
-        ],
+      button: (tapDown) => Container(
+        width: 120,
+        height: 100,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(13),
+          color: CustomColor.greyLightest
+        ),
+        child: Text(title, style: style[TextType.headline]),
       ),
       onTap: () {
         Navigator.pushNamed(context, '/toss_verify_code');

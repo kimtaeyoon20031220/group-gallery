@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:group_gallery/animations/doridori.dart';
-import 'package:group_gallery/widgets/public/button_darken.dart';
 import 'package:group_gallery/widgets/public/colors.dart';
 import 'package:group_gallery/widgets/public/scalable_button.dart';
 import 'package:group_gallery/widgets/public/text.dart';
@@ -21,7 +20,12 @@ class WideButton extends StatelessWidget {
     this.height = 50,
     this.borderRadius = 13,
     this.pressedColor = CustomColor.blackLightest,
-    this.pressedColorOpacity = 0.1
+    this.pressedColorOpacity = 0.1,
+    this.pressedColorDuration = const Duration(milliseconds: 100),
+    this.highlightColor,
+    this.splashColor,
+    this.focusColor,
+    this.hoverColor
   });
   final bool isActivate;
   final String text;
@@ -37,6 +41,11 @@ class WideButton extends StatelessWidget {
   final double borderRadius;
   final Color pressedColor;
   final double pressedColorOpacity;
+  final Duration pressedColorDuration;
+  final Color? highlightColor;
+  final Color? splashColor;
+  final Color? focusColor;
+  final Color? hoverColor;
 
   @override
   Widget build(BuildContext context) {
@@ -49,45 +58,42 @@ class WideButton extends StatelessWidget {
           doridoriKey.currentState?.shake();
         }
       },
+      highlightColor: highlightColor,
+      splashColor: splashColor,
+      focusColor: focusColor,
+      hoverColor: hoverColor,
+      buttonColor: pointColor.withOpacity(isActivate ? 1 : 0.5),
+      borderRadius: borderRadius,
       button: (tapDown) => Doridori(
         key: doridoriKey,
-        child: Stack(
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(borderRadius),
-                  color: pointColor.withOpacity(isActivate ? 1 : 0.5)
-              ),
-              width: double.infinity,
-              height: height,
-              child: Stack(
-                children: [
-                  Center(
-                    child: AnimatedOpacity(
-                      duration: const Duration(milliseconds: 50),
-                      opacity: isActivate ? 1 : 0,
-                      child: Text(
-                          text,
-                          style: style[TextType.subhead]?.merge(textStyle)
-                      ),
-                    ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: double.infinity,
+          height: height,
+          child: Stack(
+            children: [
+              Center(
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 50),
+                  opacity: isActivate ? 1 : 0,
+                  child: Text(
+                      text,
+                      style: style[TextType.subhead]?.copyWith(fontWeight: FontWeight.w600).merge(textStyle)
                   ),
-                  Center(
-                    child: AnimatedOpacity(
-                      duration: const Duration(milliseconds: 50),
-                      opacity: !isActivate ? 1 : 0,
-                      child: Text(
-                          (inactiveText != null) ? inactiveText! : text,
-                          style: style[TextType.subhead]?.merge(textStyle)
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-            ButtonDarken(tapDown: tapDown, color: pressedColor, opacity: pressedColorOpacity)
-          ],
+              Center(
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 50),
+                  opacity: !isActivate ? 1 : 0,
+                  child: Text(
+                      (inactiveText != null) ? inactiveText! : text,
+                      style: style[TextType.subhead]?.copyWith(fontWeight: FontWeight.w600).merge(textStyle)
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

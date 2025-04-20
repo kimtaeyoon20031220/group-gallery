@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../widgets/public/button_darken.dart';
 import '../widgets/public/colors.dart';
 import '../widgets/public/scalable_button.dart';
 import '../widgets/public/text.dart';
@@ -61,40 +60,36 @@ class WorkListItem extends StatelessWidget {
         onTap: () {
           Navigator.pushNamed(context, work.address);
         },
-        button: (tapDown) => Stack(
-            children: [
-              Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(13),
+        focusColor: CustomColor.greyLightest,
+        button: (tapDown) => Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(13),
+            ),
+            padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+            child: Row(
+                spacing: 15,
+                children: [
+                  Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(7),
+                        color: CustomColor.greyLightest,
+                      ),
+                      width: 35,
+                      height: 35,
+                      child: Center(
+                          child: Image.asset(work.icon, width: 25),
+                      )
                   ),
-                  padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
-                  child: Row(
-                      spacing: 15,
-                      children: [
-                        Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(7),
-                              color: CustomColor.greyLightest,
-                            ),
-                            width: 35,
-                            height: 35,
-                            child: Center(
-                                child: Image.asset(work.icon, width: 25),
-                            )
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Text(work.title, style: style[TextType.body], softWrap: false, overflow: TextOverflow.fade, maxLines: 1),
-                        ),
-                        Container(
-                          child: Text(work.date, style: style[TextType.footnote]?.merge(TextStyle(color: CustomColor.grey)), softWrap: false, overflow: TextOverflow.fade, maxLines: 1, textAlign: TextAlign.end,),
-                        ),
-                        SvgPicture.asset("assets/icons/chevron-right.svg")
-                      ]
-                  )
-              ),
-              ButtonDarken(tapDown: tapDown, color: Color(0xff4A4B4F), duration: Duration(milliseconds: 100))
-            ]
+                  Expanded(
+                    flex: 1,
+                    child: Text(work.title, style: style[TextType.body], softWrap: false, overflow: TextOverflow.fade, maxLines: 1),
+                  ),
+                  Container(
+                    child: Text(work.date, style: style[TextType.footnote]?.merge(TextStyle(color: CustomColor.grey)), softWrap: false, overflow: TextOverflow.fade, maxLines: 1, textAlign: TextAlign.end,),
+                  ),
+                  SvgPicture.asset("assets/icons/chevron-right.svg")
+                ]
+            )
         )
     );
   }

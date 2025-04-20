@@ -7,8 +7,6 @@ import 'package:group_gallery/utils/set_ui_overlay_style.dart';
 import 'package:group_gallery/widgets/public/colors.dart';
 import 'package:group_gallery/widgets/public/edit_text.dart';
 import 'package:group_gallery/widgets/public/scalable_button.dart';
-
-import '../widgets/public/button_darken.dart';
 import '../widgets/public/text.dart';
 
 class LockScreenArgs {
@@ -51,14 +49,9 @@ class _LockScreenState extends State<LockScreen> {
         leading: Container(
           margin: const EdgeInsets.fromLTRB(20, 0, 0, 0),
           child: ScalableButton(
-            button: (tapDown) => Stack(
-                children: [
-                  Container(
-                      padding: const EdgeInsets.all(5),
-                      child: SvgPicture.asset("assets/icons/arrow-left.svg", height: 30, color: CustomColor.greyLight)
-                  ),
-                  ButtonDarken(tapDown: tapDown, color: CustomColor.greyLightest)
-                ]
+            button: (tapDown) => Container(
+                padding: const EdgeInsets.all(5),
+                child: SvgPicture.asset("assets/icons/arrow-left.svg", height: 30, color: CustomColor.greyLight)
             ),
             onTap: () {
               Navigator.pop(context);

@@ -6,7 +6,6 @@ import 'package:group_gallery/widgets/public/round_dialog.dart';
 import 'package:group_gallery/widgets/public/text.dart';
 import 'package:logger/logger.dart';
 
-import '../widgets/public/button_darken.dart';
 import '../widgets/public/scalable_button.dart';
 
 class GroupSettingsScreenArgs {
@@ -43,14 +42,9 @@ class GroupSettingsScreen extends StatelessWidget {
         leading: Container(
           margin: const EdgeInsets.fromLTRB(20, 0, 0, 0),
           child: ScalableButton(
-            button: (tapDown) => Stack(
-                children: [
-                  Container(
-                      padding: const EdgeInsets.all(5),
-                      child: SvgPicture.asset("assets/icons/arrow-left.svg", height: 30, color: Color(0xff4A4B4F),)
-                  ),
-                  ButtonDarken(tapDown: tapDown)
-                ]
+            button: (tapDown) => Container(
+                padding: const EdgeInsets.all(5),
+                child: SvgPicture.asset("assets/icons/arrow-left.svg", height: 30, color: Color(0xff4A4B4F),)
             ),
             onTap: () {
               Navigator.pop(context);
@@ -132,28 +126,23 @@ class SettingItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScalableButton(
-      button: (tapDown) => Stack(
-        children: [
-          Container(
-            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-            child: Row(
-              spacing: 15,
-              children: [
-                Container(
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(7), color: CustomColor.greyLightest),
-                  width: 30,
-                  height: 30,
-                  child: Center(child: Text(icon, style: style[TextType.title3]))
-                ),
-                Expanded(
-                  child: Text(title, style: style[TextType.body], softWrap: false, maxLines: 1, overflow: TextOverflow.ellipsis)
-                ),
-                (description != "") ? Expanded(child: Text(description, style: style[TextType.caption1]?.merge(TextStyle(color: CustomColor.grey)), textAlign: TextAlign.end, softWrap: false, overflow: TextOverflow.ellipsis, maxLines: 1,)) : SizedBox()
-              ],
-            )
-          ),
-          ButtonDarken(tapDown: tapDown)
-        ],
+      button: (tapDown) => Container(
+        padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+        child: Row(
+          spacing: 15,
+          children: [
+            Container(
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(7), color: CustomColor.greyLightest),
+              width: 30,
+              height: 30,
+              child: Center(child: Text(icon, style: style[TextType.title3]))
+            ),
+            Expanded(
+              child: Text(title, style: style[TextType.body], softWrap: false, maxLines: 1, overflow: TextOverflow.ellipsis)
+            ),
+            (description != "") ? Expanded(child: Text(description, style: style[TextType.caption1]?.merge(TextStyle(color: CustomColor.grey)), textAlign: TextAlign.end, softWrap: false, overflow: TextOverflow.ellipsis, maxLines: 1,)) : SizedBox()
+          ],
+        )
       ),
       onTap: () {
         onTap();

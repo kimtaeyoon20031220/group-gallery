@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:group_gallery/widgets/public/button_darken.dart';
 import 'package:group_gallery/widgets/public/colors.dart';
 import 'package:group_gallery/widgets/public/scalable_button.dart';
 import 'package:group_gallery/widgets/public/text.dart';
@@ -42,7 +41,6 @@ class IconTextButton extends StatelessWidget {
                 ],
               )
           ),
-          ButtonDarken(tapDown: tapDown, color: shadowColor, borderRadius: borderRadius, opacity: opacity)
         ],
       ),
       onTap: onTap,

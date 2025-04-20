@@ -2,13 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:group_gallery/widgets/public/button_darken.dart';
 import 'package:group_gallery/widgets/public/image_button.dart';
 import 'package:group_gallery/widgets/public/scalable_button_extend.dart';
 import 'package:group_gallery/widgets/public/text.dart';
 import 'package:group_gallery/widgets/public/wide_button.dart';
 import 'package:group_gallery/widgets/public/scalable_button.dart';
 import 'package:group_gallery/widgets/public/colors.dart';
+
+import '../../curves/curved_animation.dart';
 
 class TossWireScreen extends StatefulWidget {
   const TossWireScreen({super.key});
@@ -36,34 +37,63 @@ class TossWireData {
   final String accountBankTo;
 }
 
-class _TossWireScreenState extends State<TossWireScreen> with TickerProviderStateMixin {
-  late AnimationController _keyboardFadeAnimation;
+String numberComma(String number) {
+  String result = "";
+  for (int i = 0; i < number.length; i++) {
+    result = number[number.length - i - 1] + (i % 3 == 0 ? "," : "") + result;
+  }
+  return result.substring(0, result.length - 1);
+}
 
+String numberMoney(String number) {
+  String result = "";
+  if (number.length >= 13) {
+    result = "${numberComma(number.substring(0, number.length - 12))}조 ${numberComma(number.substring(number.length - 12, number.length - 8))}억 ${numberComma(number.substring(number.length - 8, number.length - 4))}만 ${numberComma(number.substring(number.length - 4, number.length))}";
+  } else if (number.length >= 9) {
+    result = "${numberComma(number.substring(0, number.length - 8))}억 ${numberComma(number.substring(number.length - 8, number.length - 4))}만 ${numberComma(number.substring(number.length - 4, number.length))}";
+  } else if (number.length >= 5) {
+    result = "${numberComma(number.substring(0, number.length - 4))}만 ${numberComma(number.substring(number.length - 4, number.length))}";
+  } else {
+    result = numberComma(number);
+  }
+  return result;
+}
+
+class _TossWireScreenState extends State<TossWireScreen> with SingleTickerProviderStateMixin {
   bool isTyping = true;
+  bool isValid = false;
   String wireAmount = "0";
 
   TossWireData data = TossWireData(
     accountNameFrom: "내 입출금계좌",
     accountNumberFrom: "110-512-641308",
     accountBankFrom: "신한은행",
-    accountNameTo: "김토스",
+    accountNameTo: "김태윤",
     accountNumberTo: "100-1234-1234-11",
     accountBankTo: "토스뱅크",
   );
 
+  late AnimationController animationController;
+
   @override
   void initState() {
     super.initState();
-    _keyboardFadeAnimation = AnimationController(
+    animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 600)
     );
+    animationController.forward();
   }
 
   @override
   void dispose() {
-    _keyboardFadeAnimation.dispose();
+    animationController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant TossWireScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
   }
 
   void backToType() {
@@ -72,87 +102,145 @@ class _TossWireScreenState extends State<TossWireScreen> with TickerProviderStat
     });
   }
 
+  bool backKeyEvent() {
+    print("back");
+    if (isTyping) {
+      if (int.parse(wireAmount) > 0) {
+        setState(() {
+          wireAmount = "0";
+          isValid = false;
+        });
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      setState(() {
+        isTyping = true;
+      });
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) {
+        print(didPop);
+        if (didPop) {
+          return;
+        }
+        if (backKeyEvent()) {
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: ImageButton(
-          onTap: () {
-            if (isTyping) {
-              Navigator.pop(context);
-            } else {
-              setState(() {
-                isTyping = true;
-              });
-            }
-          },
-          icon: SvgPicture.asset("assets/icons/arrow-left.svg", color: CustomColor.greyLight)
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: ImageButton(
+            onTap: () {
+              if (isTyping) {
+                if (int.parse(wireAmount) > 0) {
+                  setState(() {
+                    wireAmount = "0";
+                    isValid = false;
+                  });
+                } else {
+                  Navigator.pop(context);
+                }
+              } else {
+                setState(() {
+                  isTyping = true;
+                });
+              }
+            },
+            icon: SvgPicture.asset("assets/icons/arrow-left.svg", color: CustomColor.greyLight)
+          ),
         ),
-      ),
-      body: Stack(
-        children: [
-          Column(
+        body: FadeTransition(
+          opacity: Tween(begin: 0.0, end: 1.0).animate(animationController),
+          child: Stack(
             children: [
-              Expanded(
-                child: Stack(
-                  children: [
-                    AnimatedOpacity(
-                      duration: const Duration(milliseconds: 100),
-                      opacity: isTyping ? 1 : 0,
-                      child: TossWireTypingScreen(
-                        accountFromBalance: "34931",
-                        data: data,
-                        wireAmount: wireAmount,
+              TossWireDecision(
+                isTyping: isTyping,
+                data: data,
+                wireAmount: wireAmount,
+                backToType: backToType,
+              ),
+              Column(
+                children: [
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        AnimatedOpacity(
+                          duration: const Duration(milliseconds: 100),
+                          opacity: isTyping ? 1 : 0,
+                          child: TossWireTypingScreen(
+                            accountFromBalance: "34931",
+                            data: data,
+                            wireAmount: wireAmount,
+                            changeWireAmount: (value) {
+                              setState(() {
+                                wireAmount = value;
+                                isValid = true;
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IgnorePointer(
+                    ignoring: !isTyping,
+                    child: AnimatedSlide(
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.easeOutCirc,
+                      offset: isValid ? Offset.zero : Offset(0.0, 1.0),
+                      child: AnimatedOpacity(
+                        duration: const Duration(milliseconds: 100),
+                        opacity: isTyping ? 1 : 0,
+                        child: Stack(
+                          children: [
+                            Container(
+                              width: double.infinity,
+                              height: 50,
+                              color: CustomColor.blue,
+                            ),
+                            WideButton(
+                              isActivate: isValid,
+                              text: "다음",
+                              onTap: () {
+                                setState(() {
+                                  isTyping = false;
+                                });
+                              },
+                              highlightColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              splashColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              pressedColorOpacity: 0,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              IgnorePointer(
-                ignoring: !isTyping,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 100),
-                  opacity: isTyping ? 1 : 0,
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        height: 50,
-                        color: CustomColor.blue,
-                      ),
-                      WideButton(
-                        text: "다음",
-                        onTap: () {
-                          setState(() {
-                            isTyping = !isTyping;
-                          });
-                        },
-                        pressedColorOpacity: 0,
-                      ),
-                    ],
                   ),
-                ),
+                  IgnorePointer(
+                    ignoring: !isTyping,
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 100),
+                      opacity: isTyping ? 1 : 0,
+                      child: _keypad()
+                    ),
+                  ),
+                ],
               ),
-              IgnorePointer(
-                ignoring: !isTyping,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 100),
-                  opacity: isTyping ? 1 : 0,
-                  child: _keypad()
-                ),
-              )
             ],
           ),
-          TossWireDecision(
-              isTyping: isTyping,
-              data: data,
-              wireAmount: wireAmount,
-              backToType: backToType,
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -160,7 +248,8 @@ class _TossWireScreenState extends State<TossWireScreen> with TickerProviderStat
     final keys = ['1','2','3','4','5','6','7','8','9','00','0','←'];
     return LayoutBuilder(
       builder: (context, constraints) {
-        return SizedBox(
+        return Container(
+          color: Colors.white,
           height: 280,
           child: GridView.count(
             crossAxisCount: 3,
@@ -168,23 +257,49 @@ class _TossWireScreenState extends State<TossWireScreen> with TickerProviderStat
             children: keys.map((k) => WideButton(
               text: k,
               pointColor: Colors.white,
+              pressedColorDuration: Duration(milliseconds: 100),
               height: 300,
               textStyle: style[TextType.largeTitle]!,
               onTap: () {
-                setState(() {
-                  if (k != "←") {
-                    wireAmount += k;
-                    if (wireAmount.isNotEmpty && wireAmount[0] == "0") {
-                      wireAmount = wireAmount.substring(1, wireAmount.length);
-                    }
-                  } else {
-                    wireAmount = wireAmount.substring(0, wireAmount.length - 1);
-                    if (wireAmount.isEmpty) {
+                if (k == "←") {
+                  if (wireAmount.length - 1 == 0 || wireAmount == "") {
+                    setState(() {
+                      isValid = false;
                       wireAmount = "0";
-                    }
+                    });
+                  } else {
+                    setState(() {
+                      isValid = true;
+                      wireAmount = wireAmount.substring(0, wireAmount.length - 1);
+                    });
                   }
-                });
-              },
+                } else if (k == "0" || k == "00") {
+                  if (int.parse(wireAmount + k) == 0) {
+                    setState(() {
+                      isValid = false;
+                      wireAmount = "0";
+                    });
+                  } else {
+                    setState(() {
+                      isValid = true;
+                      wireAmount += k;
+                    });
+                  }
+                } else {
+                  if (wireAmount == "0" || wireAmount == "") {
+                    setState(() {
+                      isValid = true;
+                      wireAmount = k;
+                    });
+                  } else {
+                    setState(() {
+                      isValid = true;
+                      wireAmount += k;
+                    });
+                  }
+                  print(wireAmount);
+                }
+              }
             )).toList(),
           ),
         );
@@ -193,62 +308,111 @@ class _TossWireScreenState extends State<TossWireScreen> with TickerProviderStat
   }
 }
 
-class TossWireTypingScreen extends StatelessWidget {
+class TossWireTypingScreen extends StatefulWidget {
   const TossWireTypingScreen({
     super.key,
     required this.data,
     required this.accountFromBalance,
     required this.wireAmount,
+    required this.changeWireAmount
   });
 
   final TossWireData data;
   final String accountFromBalance;
   final String wireAmount;
+  final Function(String value) changeWireAmount;
+
+  @override
+  State<TossWireTypingScreen> createState() => _TossWireTypingScreenState();
+}
+
+class _TossWireTypingScreenState extends State<TossWireTypingScreen> with SingleTickerProviderStateMixin {
+
+  late AnimationController animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
+    animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(30.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(30, 10, 30, 30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    widget.data.accountNameFrom,
+                    style: style[TextType.title3]?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  Text(
+                    '에서',
+                    style: style[TextType.title3],
+                  ),
+                ],
+              ),
+              SlideTransition(
+                position: Tween(begin: Offset(0.4, 0.0), end: Offset.zero).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOutCirc)),
+                child: Row(
                   children: [
                     Text(
-                      data.accountNameFrom,
-                      style: style[TextType.title3]?.copyWith(fontWeight: FontWeight.w600),
+                      '잔액 ',
+                      style: style[TextType.footnote]?.copyWith(color: CustomColor.greyLight),
                     ),
                     Text(
-                      '에서',
-                      style: style[TextType.title3],
+                      widget.accountFromBalance,
+                      style: style[TextType.footnote]?.copyWith(color: CustomColor.black),
+                    ),
+                    Text(
+                      '원',
+                      style: style[TextType.footnote]?.copyWith(color: CustomColor.greyLight),
                     ),
                   ],
                 ),
-                Text(
-                  '잔액 $accountFromBalance원',
-                  style: style[TextType.footnote]?.copyWith(color: CustomColor.greyLight),
+              ),
+              const SizedBox(height: 60),
+              Text(
+                '${widget.data.accountBankTo} ${widget.data.accountNumberTo}',
+                style: style[TextType.footnote]?.copyWith(color: CustomColor.greyLight),
+              ),
+              const SizedBox(height: 70),
+              widget.wireAmount == "0" ? Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: ScalableButton(
+                  button: (tapDown) => Container(
+                    padding: const EdgeInsets.fromLTRB(10, 7, 10, 7),
+                    child: Text("잔액 · ${numberComma(widget.accountFromBalance)}원 입력"),
+                  ),
+                  buttonColor: CustomColor.greyLightest,
+                  borderRadius: 7,
+                  onTap: () {
+                    widget.changeWireAmount(widget.accountFromBalance);
+                  },
                 ),
-                const SizedBox(height: 70),
-                Text(
-                  '${data.accountBankTo} ${data.accountNumberTo}',
-                  style: style[TextType.footnote]?.copyWith(color: CustomColor.greyLight),
-                ),
-                const SizedBox(height: 60),
-                Text(
-                  '$wireAmount원',
-                  style: style[TextType.footnote]?.copyWith(color: CustomColor.greyLight),
-                ),
-              ],
-            ),
+              ) :
+              Text(
+                '${numberMoney(widget.wireAmount)}원',
+                style: style[TextType.footnote]?.copyWith(color: CustomColor.greyLight),
+              ),
+            ],
           ),
-          const Spacer(),
-        ],
-      ),
+        ),
+        const Spacer(),
+      ],
     );
   }
 }
@@ -271,18 +435,63 @@ class TossWireDecision extends StatefulWidget {
   State<TossWireDecision> createState() => _TossWireDecisionState();
 }
 
-class _TossWireDecisionState extends State<TossWireDecision> with SingleTickerProviderStateMixin {
+class _TossWireDecisionState extends State<TossWireDecision> with TickerProviderStateMixin {
 
   bool tapDown = false;
+  late AnimationController animationController;
+  late AnimationController textAnimationController;
+  late Animation _textAnimation;
+  late Animation _text2Animation;
+  bool isTextAnimated = false;
 
-  late AnimationController textOverAnimationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
+  Matrix4 _buildTransform(double angle) {
+    return Matrix4.identity()
+        ..setEntry(0, 2, 0.001)
+        ..rotateX(angle);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    textAnimationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500), reverseDuration: const Duration(milliseconds: 0));
+    _textAnimation = Tween<double>(begin: 0.0, end: -1.0)
+      .animate(CurvedAnimation(parent: textAnimationController, curve: Curves.ease));
+    _text2Animation = Tween<double>(begin: 1.0, end: 0.0)
+      .animate(CurvedAnimation(parent: textAnimationController, curve: Curves.ease));
+    animationController.forward();
+  }
+
+  @override
+  void didUpdateWidget(covariant TossWireDecision oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isTyping) {
+      setState(() {
+        isTextAnimated = false;
+      });
+      textAnimationController.reverse();
+    } else {
+      Future.delayed(const Duration(milliseconds: 200), () {
+        setState(() {
+          isTextAnimated = true;
+        });
+        textAnimationController.forward();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
 
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    final duration = const Duration(milliseconds: 300);
+    final duration = const Duration(milliseconds: 600);
     final curve =  Curves.easeOutCirc;
 
     return SizedBox(
@@ -298,8 +507,8 @@ class _TossWireDecisionState extends State<TossWireDecision> with SingleTickerPr
                 AnimatedPositioned(
                     duration: duration,
                     left: widget.isTyping ? 30 : 0,
-                    top: widget.isTyping ? 120 : (screenHeight * 0.5) / 2,
-                    curve: curve,
+                    top: widget.isTyping ? 90 : (screenHeight * 0.5) / 2,
+                    curve: widget.isTyping ? Curves.ease : Curves.easeOutCirc,
                     child: ScalableButtonExtend(
                       scale: 1,
                       lock: widget.isTyping,
@@ -320,7 +529,7 @@ class _TossWireDecisionState extends State<TossWireDecision> with SingleTickerPr
                           opacity: tapDown ? 0.6 : 1,
                           duration: const Duration(milliseconds: 100),
                           child: AnimatedAlign(
-                            curve: curve,
+                            curve: widget.isTyping ? Curves.easeOutCirc : Curves.ease,
                             duration: duration,
                             alignment: widget.isTyping ? Alignment.topLeft : Alignment.topCenter,
                             child: Row(
@@ -330,34 +539,45 @@ class _TossWireDecisionState extends State<TossWireDecision> with SingleTickerPr
                                   duration: duration,
                                   curve: curve,
                                   style: widget.isTyping ? style[TextType.title3]?.copyWith(fontWeight: FontWeight.w600) ?? TextStyle() : style[TextType.title1Bold] ?? TextStyle(),
-                                  child: Stack(
-                                    children: [
-                                      AnimatedSlide(
-                                          duration: const Duration(milliseconds: 400),
-                                          offset: widget.isTyping ? Offset.zero : Offset(0.0, -0.3),
-                                          curve: Curves.easeOutCirc,
-                                          child: AnimatedOpacity(
-                                            duration: const Duration(milliseconds: 150),
-                                            opacity: widget.isTyping ? 1 : 0,
-                                            child: Text(
-                                              widget.data.accountNameTo,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.transparent
+                                    ),
+                                    clipBehavior: Clip.hardEdge,
+                                    child: Stack(
+                                      children: [
+                                        AnimatedSlide(
+                                            duration: const Duration(milliseconds: 300),
+                                            offset: isTextAnimated ? Offset(0.0, -1.0) : Offset.zero,
+                                            curve: CustomCurves.bounceOut,
+                                            child: AnimatedBuilder(
+                                              animation: textAnimationController,
+                                              builder: (context, child) => Transform(
+                                                alignment: Alignment.topCenter,
+                                                transform: _buildTransform(_textAnimation.value),
+                                                child: Text(
+                                                  widget.data.accountNameTo,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        AnimatedSlide(
+                                          duration: const Duration(milliseconds: 300),
+                                          offset: isTextAnimated ? Offset.zero : Offset(0.0, 1.0),
+                                          curve: CustomCurves.bounceOut,
+                                          child: AnimatedBuilder(
+                                            animation: textAnimationController,
+                                            builder: (context, child) => Transform(
+                                              transform: _buildTransform(_text2Animation.value),
+                                              child: Text(
+                                                widget.data.accountNameTo,
+                                                style: isTextAnimated ? style[TextType.title1Bold]?.copyWith(color: CustomColor.blue) : style[TextType.title3]?.copyWith(color: CustomColor.blue)
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      AnimatedSlide(
-                                        duration: const Duration(milliseconds: 400),
-                                        offset: widget.isTyping ? Offset(0.0, 3.0) : Offset.zero,
-                                        curve: Curves.easeOutCirc,
-                                        child: AnimatedOpacity(
-                                          duration: const Duration(milliseconds: 100),
-                                          opacity: widget.isTyping ? 0 : 1,
-                                          child: Text(
-                                            widget.data.accountNameTo,
-                                            style: widget.isTyping ? style[TextType.title3] ?? TextStyle() : style[TextType.title1Bold]?.copyWith(color: CustomColor.blue) ?? TextStyle(),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   )
                                 ),
                                 AnimatedDefaultTextStyle(
@@ -378,8 +598,8 @@ class _TossWireDecisionState extends State<TossWireDecision> with SingleTickerPr
                 AnimatedPositioned(
                   duration: duration,
                   left: widget.isTyping ? 30 : 0,
-                  top: widget.isTyping ? 185 : (screenHeight * 0.5 + 70) / 2,
-                  curve: curve,
+                  top: widget.isTyping ? 165 : (screenHeight * 0.5 + 70) / 2,
+                  curve: widget.isTyping ? Curves.ease : Curves.easeOutCirc,
                   child: ScalableButtonExtend(
                     scale: 1,
                     lock: widget.isTyping,
@@ -400,24 +620,48 @@ class _TossWireDecisionState extends State<TossWireDecision> with SingleTickerPr
                         opacity: tapDown ? 0.6 : 1,
                         duration: const Duration(milliseconds: 100),
                         child: AnimatedAlign(
-                          curve: curve,
+                          curve: widget.isTyping ? Curves.easeOutCirc : Curves.ease,
                           duration: duration,
                           alignment: widget.isTyping ? Alignment.topLeft : Alignment.topCenter,
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              AnimatedCrossFade(
-                                duration: const Duration(milliseconds: 50),
-                                firstChild: Text(
-                                  '${widget.wireAmount}원',
-                                  style: style[TextType.title1Bold],
-                                ),
-                                secondChild: Text(
-                                  '${widget.wireAmount}원을\n보낼까요?',
-                                  style: style[TextType.title1Bold],
-                                  textAlign: TextAlign.center,
-                                ),
-                                crossFadeState: widget.isTyping ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                              ScaleTransition(
+                                alignment: Alignment.centerLeft,
+                                scale: Tween(begin: 0.6, end: 1.0).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOutCirc)),
+                                child: Container(
+                                  constraints: BoxConstraints(
+                                    maxWidth: widget.isTyping ? screenWidth - 30 : screenWidth
+                                  ),
+                                  child: AnimatedDefaultTextStyle(
+                                    duration: duration,
+                                    curve: curve,
+                                    style: style[TextType.title1Bold]!.copyWith(color: widget.wireAmount == "0" ? CustomColor.greyLight.withOpacity(0.5) : CustomColor.black,),
+                                    textAlign: widget.isTyping ? TextAlign.start : TextAlign.center,
+                                    child: Text(
+                                      widget.wireAmount == "0" ? "얼마나 보낼까요?" : widget.isTyping ? '${numberComma(widget.wireAmount)}원' : '${numberComma(widget.wireAmount)}원을\n보낼까요?',
+                                      maxLines: widget.isTyping ? 1 : null,
+                                      softWrap: false,
+                                      overflow: TextOverflow.fade,
+                                    ),
+                                  ),
+                                )
+                              // ) :
+                              // SizedBox(
+                              //   width: MediaQuery.of(context).size.width,
+                              //   child: Text(
+                              //     '${numberComma(widget.wireAmount)}원을\n보낼까요?',
+                              //     style: style[TextType.title1Bold],
+                              //     textAlign: TextAlign.center,
+                              //     softWrap: false,
+                              //     overflow: TextOverflow.fade,
+                              //   ),
+                              // ),
+                              // AnimatedCrossFade(
+                              //   duration: const Duration(milliseconds: 50),
+                              //   firstChild:
+                              //   secondChild:
+                              //   crossFadeState: widget.isTyping ? CrossFadeState.showFirst : CrossFadeState.showSecond,
                               ),
                             ],
                           ),
@@ -483,7 +727,7 @@ class _TossWireSendState extends State<TossWireSend> {
       ];
     });
     for (int i = 0; i < isShowing.length; i++) {
-      Future.delayed(Duration(milliseconds: 50 * i), () {
+      Future.delayed(Duration(milliseconds: 30 * i), () {
         setState(() {
           isShowing[i] = true;
         });
@@ -515,7 +759,6 @@ class _TossWireSendState extends State<TossWireSend> {
                     ],
                   ),
                 ),
-                ButtonDarken(tapDown: tapDown)
               ],
             ),
           )),
@@ -529,17 +772,13 @@ class _TossWireSendState extends State<TossWireSend> {
           height: 50,
           child: Center(
             child: ScalableButton(
-              button: (tapDown) => Stack(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(7)
-                    ),
-                    child: Text("평생 수수료 무료", style: style[TextType.footnote]?.copyWith(color: CustomColor.greyLight)),
-                  ),
-                  ButtonDarken(tapDown: tapDown)
-                ]
+              buttonColor: Colors.transparent,
+              button: (tapDown) => Container(
+                padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(7)
+                ),
+                child: Text("평생 수수료 무료", style: style[TextType.footnote]?.copyWith(color: CustomColor.greyLight)),
               ),
               onTap: () {},
             ),

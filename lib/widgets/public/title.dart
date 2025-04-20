@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:group_gallery/widgets/public/button_darken.dart';
 import 'package:group_gallery/widgets/public/scalable_button.dart';
 import 'package:group_gallery/widgets/public/text.dart';
 
@@ -62,14 +61,9 @@ class TitleIconButtonsBlock extends StatelessWidget {
             child: Row(
               children: [
                 for (int i = 0; i < buttons.length; i++) ScalableButton(
-                    button: (tapDown) => Stack(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          child: buttons[i]
-                        ),
-                        ButtonDarken(tapDown: tapDown)
-                      ],
+                    button: (tapDown) => Container(
+                      padding: const EdgeInsets.all(10),
+                      child: buttons[i]
                     ),
                     onTap: ()
                     {

@@ -103,6 +103,7 @@ class _TossWireScreenState extends State<TossWireScreen> with SingleTickerProvid
   }
 
   bool backKeyEvent() {
+    print("back");
     if (isTyping) {
       if (int.parse(wireAmount) > 0) {
         setState(() {
@@ -126,6 +127,7 @@ class _TossWireScreenState extends State<TossWireScreen> with SingleTickerProvid
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
+        print(didPop);
         if (didPop) {
           return;
         }
@@ -295,6 +297,7 @@ class _TossWireScreenState extends State<TossWireScreen> with SingleTickerProvid
                       wireAmount += k;
                     });
                   }
+                  print(wireAmount);
                 }
               }
             )).toList(),

@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:group_gallery/screens/works/mapBallScreen.dart';
-import 'package:group_gallery/screens/works/tossNumberScreen.dart';
 import 'package:group_gallery/screens/works/tossSegmentedPickerScreen.dart';
 import 'package:group_gallery/screens/works/tossVerifyCodeScreen.dart';
 import 'package:group_gallery/screens/workScreen.dart';
@@ -47,9 +46,6 @@ Route pageRoute(settings) {
     }
     case '/toss_wire': {
       return pageRouteBuilder(TossWireScreen(), TransitionType.fromRight, settings);
-    }
-    case '/toss_number': {
-      return pageRouteBuilder(TossNumberScreen(), TransitionType.fromRight, settings);
     }
     default: return pageRouteBuilder(ErrorScreen(), TransitionType.fromBottom, settings);
   }

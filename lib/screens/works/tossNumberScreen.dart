@@ -94,9 +94,10 @@ class _TossNumberScreenState extends State<TossNumberScreen> {
                       rand++;
                     });
                   }),
-                  TossNumbers(maxLength: 20, number: list[rand % list.length]),
+                  Text("hi")
                 ],
-              )
+              ),
+              TossNumbers(maxLength: 20, number: list[rand % list.length]),
             ]
         ),
       ),
@@ -177,7 +178,7 @@ class _TossNumbersState extends State<TossNumbers> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(),
+      decoration: BoxDecoration(color: Colors.red),
       clipBehavior: Clip.hardEdge,
       child: TweenAnimationBuilder(
         tween: Tween<Offset>(begin: prevOffset, end: Offset(-allWidth + useWidth, 0.0)),
@@ -245,7 +246,7 @@ class _TossNumberState extends State<TossNumber> {
     return Container(
       width: widget.controller.getCurrentSize().width,
       height: widget.controller.getCurrentSize().height,
-      decoration: BoxDecoration(),
+      decoration: BoxDecoration(color: Colors.green),
       clipBehavior: Clip.hardEdge,
       child: Stack(
         children: [

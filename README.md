@@ -16,3 +16,10 @@
 - smooth_page_indicator
 - shimmer
 - animations
+
+## 구현 기록
+- 04.16) 토스 문자 인증
+- 04.17) 맵볼
+- 04.17) 토스 Segmented Picker
+- 04.19) 토스 송금창
+- 04.21) 토스 숫자 롤링 (포기)

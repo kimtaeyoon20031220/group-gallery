@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:group_gallery/screens/works/mapBallScreen.dart';
+import 'package:group_gallery/screens/works/tossNumberScreen.dart';
 import 'package:group_gallery/screens/works/tossSegmentedPickerScreen.dart';
 import 'package:group_gallery/screens/works/tossVerifyCodeScreen.dart';
 import 'package:group_gallery/screens/workScreen.dart';
@@ -47,15 +48,18 @@ Route pageRoute(settings) {
     case '/toss_wire': {
       return pageRouteBuilder(TossWireScreen(), TransitionType.fromRight, settings);
     }
+    case '/toss_number': {
+      return pageRouteBuilder(TossNumberScreen(), TransitionType.fromRight, settings);
+    }
     default: return pageRouteBuilder(ErrorScreen(), TransitionType.fromBottom, settings);
   }
 }
 
 PageRouteBuilder pageRouteBuilder(Widget nextScreen, TransitionType transitionType, dynamic settings) {
   return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => nextScreen,
-    settings: settings,
-    transitionsBuilder: (context, animation, secondaryAnimation, child) => transition(context, animation, secondaryAnimation, child, transitionType)
+      pageBuilder: (context, animation, secondaryAnimation) => nextScreen,
+      settings: settings,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) => transition(context, animation, secondaryAnimation, child, transitionType)
   );
 }
 
@@ -152,8 +156,8 @@ Widget transition(BuildContext context, Animation<double> animation, Animation<d
       return FadeTransition(
         opacity: Tween<double>(begin: 0.0, end: 1.0).animate(curvedAnimation),
         child: ScaleTransition(
-          scale: Tween<double>(begin: 0.0, end: 1.0).animate(curvedAnimation),
-          child: child
+            scale: Tween<double>(begin: 0.0, end: 1.0).animate(curvedAnimation),
+            child: child
         ),
       );
     }

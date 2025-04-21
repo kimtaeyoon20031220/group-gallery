@@ -79,8 +79,8 @@ class _TossWireScreenState extends State<TossWireScreen> with SingleTickerProvid
   void initState() {
     super.initState();
     animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600)
+        vsync: this,
+        duration: const Duration(milliseconds: 600)
     );
     animationController.forward();
   }
@@ -103,7 +103,6 @@ class _TossWireScreenState extends State<TossWireScreen> with SingleTickerProvid
   }
 
   bool backKeyEvent() {
-    print("back");
     if (isTyping) {
       if (int.parse(wireAmount) > 0) {
         setState(() {
@@ -127,7 +126,6 @@ class _TossWireScreenState extends State<TossWireScreen> with SingleTickerProvid
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) {
-        print(didPop);
         if (didPop) {
           return;
         }
@@ -141,23 +139,23 @@ class _TossWireScreenState extends State<TossWireScreen> with SingleTickerProvid
           backgroundColor: Colors.white,
           elevation: 0,
           leading: ImageButton(
-            onTap: () {
-              if (isTyping) {
-                if (int.parse(wireAmount) > 0) {
-                  setState(() {
-                    wireAmount = "0";
-                    isValid = false;
-                  });
+              onTap: () {
+                if (isTyping) {
+                  if (int.parse(wireAmount) > 0) {
+                    setState(() {
+                      wireAmount = "0";
+                      isValid = false;
+                    });
+                  } else {
+                    Navigator.pop(context);
+                  }
                 } else {
-                  Navigator.pop(context);
+                  setState(() {
+                    isTyping = true;
+                  });
                 }
-              } else {
-                setState(() {
-                  isTyping = true;
-                });
-              }
-            },
-            icon: SvgPicture.asset("assets/icons/arrow-left.svg", color: CustomColor.greyLight)
+              },
+              icon: SvgPicture.asset("assets/icons/arrow-left.svg", color: CustomColor.greyLight)
           ),
         ),
         body: FadeTransition(
@@ -231,9 +229,9 @@ class _TossWireScreenState extends State<TossWireScreen> with SingleTickerProvid
                   IgnorePointer(
                     ignoring: !isTyping,
                     child: AnimatedOpacity(
-                      duration: const Duration(milliseconds: 100),
-                      opacity: isTyping ? 1 : 0,
-                      child: _keypad()
+                        duration: const Duration(milliseconds: 100),
+                        opacity: isTyping ? 1 : 0,
+                        child: _keypad()
                     ),
                   ),
                 ],
@@ -255,51 +253,50 @@ class _TossWireScreenState extends State<TossWireScreen> with SingleTickerProvid
             crossAxisCount: 3,
             childAspectRatio: (constraints.maxWidth / 3) / (280 / 4),
             children: keys.map((k) => WideButton(
-              text: k,
-              pointColor: Colors.white,
-              pressedColorDuration: Duration(milliseconds: 100),
-              height: 300,
-              textStyle: style[TextType.largeTitle]!,
-              onTap: () {
-                if (k == "←") {
-                  if (wireAmount.length - 1 == 0 || wireAmount == "") {
-                    setState(() {
-                      isValid = false;
-                      wireAmount = "0";
-                    });
+                text: k,
+                pointColor: Colors.white,
+                pressedColorDuration: Duration(milliseconds: 100),
+                height: 300,
+                textStyle: style[TextType.largeTitle]!,
+                onTap: () {
+                  if (k == "←") {
+                    if (wireAmount.length - 1 == 0 || wireAmount == "") {
+                      setState(() {
+                        isValid = false;
+                        wireAmount = "0";
+                      });
+                    } else {
+                      setState(() {
+                        isValid = true;
+                        wireAmount = wireAmount.substring(0, wireAmount.length - 1);
+                      });
+                    }
+                  } else if (k == "0" || k == "00") {
+                    if (int.parse(wireAmount + k) == 0) {
+                      setState(() {
+                        isValid = false;
+                        wireAmount = "0";
+                      });
+                    } else {
+                      setState(() {
+                        isValid = true;
+                        wireAmount += k;
+                      });
+                    }
                   } else {
-                    setState(() {
-                      isValid = true;
-                      wireAmount = wireAmount.substring(0, wireAmount.length - 1);
-                    });
+                    if (wireAmount == "0" || wireAmount == "") {
+                      setState(() {
+                        isValid = true;
+                        wireAmount = k;
+                      });
+                    } else {
+                      setState(() {
+                        isValid = true;
+                        wireAmount += k;
+                      });
+                    }
                   }
-                } else if (k == "0" || k == "00") {
-                  if (int.parse(wireAmount + k) == 0) {
-                    setState(() {
-                      isValid = false;
-                      wireAmount = "0";
-                    });
-                  } else {
-                    setState(() {
-                      isValid = true;
-                      wireAmount += k;
-                    });
-                  }
-                } else {
-                  if (wireAmount == "0" || wireAmount == "") {
-                    setState(() {
-                      isValid = true;
-                      wireAmount = k;
-                    });
-                  } else {
-                    setState(() {
-                      isValid = true;
-                      wireAmount += k;
-                    });
-                  }
-                  print(wireAmount);
                 }
-              }
             )).toList(),
           ),
         );
@@ -446,8 +443,8 @@ class _TossWireDecisionState extends State<TossWireDecision> with TickerProvider
 
   Matrix4 _buildTransform(double angle) {
     return Matrix4.identity()
-        ..setEntry(0, 2, 0.001)
-        ..rotateX(angle);
+      ..setEntry(0, 2, 0.001)
+      ..rotateX(angle);
   }
 
   @override
@@ -456,9 +453,9 @@ class _TossWireDecisionState extends State<TossWireDecision> with TickerProvider
     animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
     textAnimationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500), reverseDuration: const Duration(milliseconds: 0));
     _textAnimation = Tween<double>(begin: 0.0, end: -1.0)
-      .animate(CurvedAnimation(parent: textAnimationController, curve: Curves.ease));
+        .animate(CurvedAnimation(parent: textAnimationController, curve: Curves.ease));
     _text2Animation = Tween<double>(begin: 1.0, end: 0.0)
-      .animate(CurvedAnimation(parent: textAnimationController, curve: Curves.ease));
+        .animate(CurvedAnimation(parent: textAnimationController, curve: Curves.ease));
     animationController.forward();
   }
 
@@ -498,13 +495,13 @@ class _TossWireDecisionState extends State<TossWireDecision> with TickerProvider
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
       child: Stack(
-        children: [
-          AnimatedScale(
-            scale: tapDown ? 0.95 : 1,
-            duration: const Duration(milliseconds: 100),
-            child: Stack(
-              children: [
-                AnimatedPositioned(
+          children: [
+            AnimatedScale(
+              scale: tapDown ? 0.95 : 1,
+              duration: const Duration(milliseconds: 100),
+              child: Stack(
+                children: [
+                  AnimatedPositioned(
                     duration: duration,
                     left: widget.isTyping ? 30 : 0,
                     top: widget.isTyping ? 90 : (screenHeight * 0.5) / 2,
@@ -536,17 +533,17 @@ class _TossWireDecisionState extends State<TossWireDecision> with TickerProvider
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 AnimatedDefaultTextStyle(
-                                  duration: duration,
-                                  curve: curve,
-                                  style: widget.isTyping ? style[TextType.title3]?.copyWith(fontWeight: FontWeight.w600) ?? TextStyle() : style[TextType.title1Bold] ?? TextStyle(),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Colors.transparent
-                                    ),
-                                    clipBehavior: Clip.hardEdge,
-                                    child: Stack(
-                                      children: [
-                                        AnimatedSlide(
+                                    duration: duration,
+                                    curve: curve,
+                                    style: widget.isTyping ? style[TextType.title3]?.copyWith(fontWeight: FontWeight.w600) ?? TextStyle() : style[TextType.title1Bold] ?? TextStyle(),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.transparent
+                                      ),
+                                      clipBehavior: Clip.hardEdge,
+                                      child: Stack(
+                                        children: [
+                                          AnimatedSlide(
                                             duration: const Duration(milliseconds: 300),
                                             offset: isTextAnimated ? Offset(0.0, -1.0) : Offset.zero,
                                             curve: CustomCurves.bounceOut,
@@ -561,24 +558,24 @@ class _TossWireDecisionState extends State<TossWireDecision> with TickerProvider
                                               ),
                                             ),
                                           ),
-                                        AnimatedSlide(
-                                          duration: const Duration(milliseconds: 300),
-                                          offset: isTextAnimated ? Offset.zero : Offset(0.0, 1.0),
-                                          curve: CustomCurves.bounceOut,
-                                          child: AnimatedBuilder(
-                                            animation: textAnimationController,
-                                            builder: (context, child) => Transform(
-                                              transform: _buildTransform(_text2Animation.value),
-                                              child: Text(
-                                                widget.data.accountNameTo,
-                                                style: isTextAnimated ? style[TextType.title1Bold]?.copyWith(color: CustomColor.blue) : style[TextType.title3]?.copyWith(color: CustomColor.blue)
+                                          AnimatedSlide(
+                                            duration: const Duration(milliseconds: 300),
+                                            offset: isTextAnimated ? Offset.zero : Offset(0.0, 1.0),
+                                            curve: CustomCurves.bounceOut,
+                                            child: AnimatedBuilder(
+                                              animation: textAnimationController,
+                                              builder: (context, child) => Transform(
+                                                transform: _buildTransform(_text2Animation.value),
+                                                child: Text(
+                                                    widget.data.accountNameTo,
+                                                    style: isTextAnimated ? style[TextType.title1Bold]?.copyWith(color: CustomColor.blue) : style[TextType.title3]?.copyWith(color: CustomColor.blue)
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
+                                        ],
+                                      ),
+                                    )
                                 ),
                                 AnimatedDefaultTextStyle(
                                   duration: duration,
@@ -595,93 +592,93 @@ class _TossWireDecisionState extends State<TossWireDecision> with TickerProvider
                       ),
                     ),
                   ),
-                AnimatedPositioned(
-                  duration: duration,
-                  left: widget.isTyping ? 30 : 0,
-                  top: widget.isTyping ? 165 : (screenHeight * 0.5 + 70) / 2,
-                  curve: widget.isTyping ? Curves.ease : Curves.easeOutCirc,
-                  child: ScalableButtonExtend(
-                    scale: 1,
-                    lock: widget.isTyping,
-                    tapDown: (tapDownState) {
-                      setState(() {
-                        tapDown = tapDownState;
-                      });
-                    },
-                    onTap: () {
-                      setState(() {
-                        widget.backToType();
-                      });
-                    },
-                    button: Container(
-                      width: screenWidth,
-                      height: 100,
-                      child: AnimatedOpacity(
-                        opacity: tapDown ? 0.6 : 1,
-                        duration: const Duration(milliseconds: 100),
-                        child: AnimatedAlign(
-                          curve: widget.isTyping ? Curves.easeOutCirc : Curves.ease,
-                          duration: duration,
-                          alignment: widget.isTyping ? Alignment.topLeft : Alignment.topCenter,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              ScaleTransition(
-                                alignment: Alignment.centerLeft,
-                                scale: Tween(begin: 0.6, end: 1.0).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOutCirc)),
-                                child: Container(
-                                  constraints: BoxConstraints(
-                                    maxWidth: widget.isTyping ? screenWidth - 30 : screenWidth
-                                  ),
-                                  child: AnimatedDefaultTextStyle(
-                                    duration: duration,
-                                    curve: curve,
-                                    style: style[TextType.title1Bold]!.copyWith(color: widget.wireAmount == "0" ? CustomColor.greyLight.withOpacity(0.5) : CustomColor.black,),
-                                    textAlign: widget.isTyping ? TextAlign.start : TextAlign.center,
-                                    child: Text(
-                                      widget.wireAmount == "0" ? "얼마나 보낼까요?" : widget.isTyping ? '${numberComma(widget.wireAmount)}원' : '${numberComma(widget.wireAmount)}원을\n보낼까요?',
-                                      maxLines: widget.isTyping ? 1 : null,
-                                      softWrap: false,
-                                      overflow: TextOverflow.fade,
-                                    ),
-                                  ),
-                                )
-                              // ) :
-                              // SizedBox(
-                              //   width: MediaQuery.of(context).size.width,
-                              //   child: Text(
-                              //     '${numberComma(widget.wireAmount)}원을\n보낼까요?',
-                              //     style: style[TextType.title1Bold],
-                              //     textAlign: TextAlign.center,
-                              //     softWrap: false,
-                              //     overflow: TextOverflow.fade,
-                              //   ),
-                              // ),
-                              // AnimatedCrossFade(
-                              //   duration: const Duration(milliseconds: 50),
-                              //   firstChild:
-                              //   secondChild:
-                              //   crossFadeState: widget.isTyping ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-                              ),
-                            ],
+                  AnimatedPositioned(
+                    duration: duration,
+                    left: widget.isTyping ? 30 : 0,
+                    top: widget.isTyping ? 165 : (screenHeight * 0.5 + 70) / 2,
+                    curve: widget.isTyping ? Curves.ease : Curves.easeOutCirc,
+                    child: ScalableButtonExtend(
+                      scale: 1,
+                      lock: widget.isTyping,
+                      tapDown: (tapDownState) {
+                        setState(() {
+                          tapDown = tapDownState;
+                        });
+                      },
+                      onTap: () {
+                        setState(() {
+                          widget.backToType();
+                        });
+                      },
+                      button: Container(
+                        width: screenWidth,
+                        height: 100,
+                        child: AnimatedOpacity(
+                          opacity: tapDown ? 0.6 : 1,
+                          duration: const Duration(milliseconds: 100),
+                          child: AnimatedAlign(
+                            curve: widget.isTyping ? Curves.easeOutCirc : Curves.ease,
+                            duration: duration,
+                            alignment: widget.isTyping ? Alignment.topLeft : Alignment.topCenter,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ScaleTransition(
+                                    alignment: Alignment.centerLeft,
+                                    scale: Tween(begin: 0.6, end: 1.0).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOutCirc)),
+                                    child: Container(
+                                      constraints: BoxConstraints(
+                                          maxWidth: widget.isTyping ? screenWidth - 30 : screenWidth
+                                      ),
+                                      child: AnimatedDefaultTextStyle(
+                                        duration: duration,
+                                        curve: curve,
+                                        style: style[TextType.title1Bold]!.copyWith(color: widget.wireAmount == "0" ? CustomColor.greyLight.withOpacity(0.5) : CustomColor.black,),
+                                        textAlign: widget.isTyping ? TextAlign.start : TextAlign.center,
+                                        child: Text(
+                                          widget.wireAmount == "0" ? "얼마나 보낼까요?" : widget.isTyping ? '${numberComma(widget.wireAmount)}원' : '${numberComma(widget.wireAmount)}원을\n보낼까요?',
+                                          maxLines: widget.isTyping ? 1 : null,
+                                          softWrap: false,
+                                          overflow: TextOverflow.fade,
+                                        ),
+                                      ),
+                                    )
+                                  // ) :
+                                  // SizedBox(
+                                  //   width: MediaQuery.of(context).size.width,
+                                  //   child: Text(
+                                  //     '${numberComma(widget.wireAmount)}원을\n보낼까요?',
+                                  //     style: style[TextType.title1Bold],
+                                  //     textAlign: TextAlign.center,
+                                  //     softWrap: false,
+                                  //     overflow: TextOverflow.fade,
+                                  //   ),
+                                  // ),
+                                  // AnimatedCrossFade(
+                                  //   duration: const Duration(milliseconds: 50),
+                                  //   firstChild:
+                                  //   secondChild:
+                                  //   crossFadeState: widget.isTyping ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Positioned.fill(
-            bottom: 0,
-            child: Column(
-              children: [
-                Spacer(),
-                !widget.isTyping ? TossWireSend(isTyping: widget.isTyping, data: widget.data) : SizedBox(),
-              ],
-            ))
-        ]
+            Positioned.fill(
+                bottom: 0,
+                child: Column(
+                  children: [
+                    Spacer(),
+                    !widget.isTyping ? TossWireSend(isTyping: widget.isTyping, data: widget.data) : SizedBox(),
+                  ],
+                ))
+          ]
       ),
     );
   }
@@ -748,7 +745,7 @@ class _TossWireSendState extends State<TossWireSend> {
                 Container(
                   padding: const EdgeInsets.fromLTRB(30, 7, 30, 7),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(7)
+                      borderRadius: BorderRadius.circular(7)
                   ),
                   child: Row(
                     children: [
@@ -767,22 +764,22 @@ class _TossWireSendState extends State<TossWireSend> {
           child: WideButton(text: "보내기"),
         )),
         slide(4, Container(
-          width: double.infinity,
-          margin: const EdgeInsets.only(bottom: 20),
-          height: 50,
-          child: Center(
-            child: ScalableButton(
-              buttonColor: Colors.transparent,
-              button: (tapDown) => Container(
-                padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(7)
+            width: double.infinity,
+            margin: const EdgeInsets.only(bottom: 20),
+            height: 50,
+            child: Center(
+              child: ScalableButton(
+                buttonColor: Colors.transparent,
+                button: (tapDown) => Container(
+                  padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(7)
+                  ),
+                  child: Text("평생 수수료 무료", style: style[TextType.footnote]?.copyWith(color: CustomColor.greyLight)),
                 ),
-                child: Text("평생 수수료 무료", style: style[TextType.footnote]?.copyWith(color: CustomColor.greyLight)),
+                onTap: () {},
               ),
-              onTap: () {},
-            ),
-          )
+            )
         ))
       ],
     );
@@ -794,9 +791,9 @@ class _TossWireSendState extends State<TossWireSend> {
       curve: Curves.easeOutCirc,
       duration: const Duration(milliseconds: 500),
       child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 100),
-        opacity: isShowing[index] ? 1 : 0,
-        child: child
+          duration: const Duration(milliseconds: 100),
+          opacity: isShowing[index] ? 1 : 0,
+          child: child
       ),
     );
   }
